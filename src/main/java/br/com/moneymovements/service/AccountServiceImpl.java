@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import br.com.moneymovements.domain.Account;
 import br.com.moneymovements.domain.AccountManager;
 import br.com.moneymovements.domain.Movement;
+import br.com.moneymovements.exception.InsufficientBalanceException;
 import br.com.moneymovements.repository.AccountRepository;
 import br.com.moneymovements.repository.MovementRepository;
 import lombok.Getter;
@@ -68,16 +69,26 @@ public class AccountServiceImpl implements AccountService {
 	
 	public Movement withdraw(Movement movement) {
 		movement.setDate(new Date());
-		Account newAccount = this.accountManager.withdrawCalc(movement.getAccount(), movement);
-		this.accountRepository.save(newAccount);
-		return this.movementRepository.save(movement);
+		Account newAccount = null;
+		try {
+			newAccount = this.accountManager.withdrawCalc(movement.getAccount(), movement);
+			this.accountRepository.save(newAccount);
+			this.movementRepository.save(movement);
+		} catch (InsufficientBalanceException e) {
+			e.getMessage();
+		}
+		return movement;
 	}
 	
 	public Movement transfer(int accSource, int accDestination, Movement movement) {
 		movement.setDate(new Date());
 		Account source = this.accountRepository.findById(accSource).orElse(null);
 		Account destinarion = this.accountRepository.findById(accDestination).orElse(null);
-		this.accountRepository.save(this.accountManager.withdrawCalc(source, movement));
+		try {
+			this.accountRepository.save(this.accountManager.withdrawCalc(source, movement));
+		} catch (InsufficientBalanceException e) {
+			e.getMessage();
+		}
 		this.accountRepository.save(this.accountManager.depositCalc(destinarion, movement));
 		return this.movementRepository.save(movement);
 	}

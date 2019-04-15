@@ -2,6 +2,8 @@ package br.com.moneymovements.domain;
 
 import org.springframework.stereotype.Component;
 
+import br.com.moneymovements.exception.InsufficientBalanceException;
+
 @Component
 public class AccountManager  {
 	
@@ -22,10 +24,13 @@ public class AccountManager  {
 		return acc;
 	}
 	
-	public Account withdrawCalc(Account acc, Movement mov) {
+	public Account withdrawCalc(Account acc, Movement mov) throws InsufficientBalanceException {
 		double newValue = acc.getBalance() - mov.getValue();
-		acc.setBalance(newValue);
-		return acc;
+		if (newValue < 0) {
+			throw new InsufficientBalanceException("Insufficient balance");
+		} else {
+			acc.setBalance(newValue);
+			return acc;
+		}
 	}
-		
 }
