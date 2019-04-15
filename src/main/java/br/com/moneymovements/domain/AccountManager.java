@@ -27,7 +27,7 @@ public class AccountManager  {
 	public Account withdrawCalc(Account acc, Movement mov) throws InsufficientBalanceException {
 		double newValue = acc.getBalance() - mov.getValue();
 		if (newValue < 0) {
-			throw new InsufficientBalanceException("Insufficient balance");
+			throw new InsufficientBalanceException();
 		} else {
 			acc.setBalance(newValue);
 			return acc;

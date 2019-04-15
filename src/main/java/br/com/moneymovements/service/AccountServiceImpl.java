@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import br.com.moneymovements.domain.Account;
 import br.com.moneymovements.domain.AccountManager;
@@ -74,10 +76,10 @@ public class AccountServiceImpl implements AccountService {
 			newAccount = this.accountManager.withdrawCalc(movement.getAccount(), movement);
 			this.accountRepository.save(newAccount);
 			this.movementRepository.save(movement);
+			return movement;
 		} catch (InsufficientBalanceException e) {
-			e.getMessage();
+			throw new ResponseStatusException (HttpStatus.CONFLICT, "Insufficient balance", e);
 		}
-		return movement;
 	}
 	
 	public Movement transfer(int accSource, int accDestination, Movement movement) {
@@ -87,7 +89,7 @@ public class AccountServiceImpl implements AccountService {
 		try {
 			this.accountRepository.save(this.accountManager.withdrawCalc(source, movement));
 		} catch (InsufficientBalanceException e) {
-			e.getMessage();
+			throw new ResponseStatusException (HttpStatus.CONFLICT, "Insufficient balance", e);
 		}
 		this.accountRepository.save(this.accountManager.depositCalc(destinarion, movement));
 		return this.movementRepository.save(movement);
