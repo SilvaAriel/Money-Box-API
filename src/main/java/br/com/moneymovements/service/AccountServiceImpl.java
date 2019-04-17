@@ -13,6 +13,9 @@ import org.springframework.web.server.ResponseStatusException;
 import br.com.moneymovements.domain.Account;
 import br.com.moneymovements.domain.AccountManager;
 import br.com.moneymovements.domain.Movement;
+import br.com.moneymovements.exception.OpenAccountException;
+import br.com.moneymovements.exception.UnableToDepositException;
+import br.com.moneymovements.exception.CloseAccountException;
 import br.com.moneymovements.exception.InsufficientBalanceException;
 import br.com.moneymovements.repository.AccountRepository;
 import br.com.moneymovements.repository.MovementRepository;
@@ -41,58 +44,75 @@ public class AccountServiceImpl implements AccountService {
 	public List<Movement> getAllMovementsByAccountSorted(int id, String sort) {
 		return this.movementRepository.getAccountMovementsSorted(id, sort);
 	}
-
+	//TESTAR---------------------------------------
 	@Override
 	public Account createAccount(String accname, double balance) {
-		Account acc = accountManager.createAccount(accname, balance);
-		this.accountRepository.save(acc);
-		return acc;
+		try {
+			Account acc;
+			acc = accountManager.createAccount(accname, balance);
+			this.accountRepository.save(acc);
+			return acc;
+		} catch (OpenAccountException e) {
+			throw new ResponseStatusException (HttpStatus.INTERNAL_SERVER_ERROR, "Unable to open the account: " + accname, e);
+		}
 	}
-
+	//TESTAR---------------------------------------
 	@Override
 	public boolean closeAccount(int id) {
 		Account accFromBase = this.accountRepository.findById(id).orElse(null);
-		Account accClosed = accountManager.closeAccount(accFromBase);
-		this.accountRepository.save(accClosed);
-		return true;
+		try {
+			accFromBase = accountManager.closeAccount(accFromBase);
+			this.accountRepository.save(accFromBase);
+			return true;
+		} catch (CloseAccountException e) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to close the account: " + accFromBase.getName(), e);
+		}
 	}
-	
+	//TESTAR---------------------------------------
 	public double getBalance(int id) {
 		Account accFromBase = this.accountRepository.findById(id).orElse(null);
 		return accFromBase.getBalance();
 	}
-	
+	//TESTAR---------------------------------------
 	public Movement deposit(Movement movement) {
-		movement.setDate(new Date());
-		Account newAccount = this.accountManager.depositCalc(movement.getAccount(), movement);
-		this.accountRepository.save(newAccount);
-		return this.movementRepository.save(movement);
-	}
-	
-	public Movement withdraw(Movement movement) {
-		movement.setDate(new Date());
-		Account newAccount = null;
 		try {
+			movement.setDate(new Date());
+			Account account;
+			account = this.accountManager.depositCalc(movement.getAccount(), movement);
+			this.accountRepository.save(account);
+			return this.movementRepository.save(movement);
+		} catch (UnableToDepositException e) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to make a deposit to account: " + movement.getAccount().getName(), e);
+		}
+	}
+	//TESTAR---------------------------------------
+	public Movement withdraw(Movement movement) {
+		try {
+			movement.setDate(new Date());
+			Account newAccount;
 			newAccount = this.accountManager.withdrawCalc(movement.getAccount(), movement);
 			this.accountRepository.save(newAccount);
 			this.movementRepository.save(movement);
 			return movement;
 		} catch (InsufficientBalanceException e) {
-			throw new ResponseStatusException (HttpStatus.CONFLICT, "Insufficient balance", e);
+			throw new ResponseStatusException (HttpStatus.CONFLICT, "Insufficient balance on account: " + movement.getAccount().getName(), e);
 		}
 	}
-	
+	//TESTAR---------------------------------------
 	public Movement transfer(int accSource, int accDestination, Movement movement) {
-		movement.setDate(new Date());
 		Account source = this.accountRepository.findById(accSource).orElse(null);
 		Account destinarion = this.accountRepository.findById(accDestination).orElse(null);
 		try {
+			movement.setDate(new Date());
 			this.accountRepository.save(this.accountManager.withdrawCalc(source, movement));
+			this.accountRepository.save(this.accountManager.depositCalc(destinarion, movement));
+			return this.movementRepository.save(movement);
 		} catch (InsufficientBalanceException e) {
-			throw new ResponseStatusException (HttpStatus.CONFLICT, "Insufficient balance", e);
+			throw new ResponseStatusException (HttpStatus.CONFLICT, "Insufficient balance on account: " + source.getName(), e);
+		} catch (UnableToDepositException e) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to make a deposit to account: " + movement.getAccount().getName(), e);
+
 		}
-		this.accountRepository.save(this.accountManager.depositCalc(destinarion, movement));
-		return this.movementRepository.save(movement);
 	}
 
 }

@@ -20,7 +20,7 @@ public class MMController {
 	@Autowired
 	private AccountService accountService;
 
-	@GetMapping("/createaccount")
+	@GetMapping("/openaccount")
 	public Account createAccount(String accname, double balance) {
 		return accountService.createAccount(accname, balance);
 	}
