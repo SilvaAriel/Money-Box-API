@@ -44,7 +44,6 @@ public class AccountServiceImpl implements AccountService {
 	public List<Movement> getAllMovementsByAccountSorted(int id, String sort) {
 		return this.movementRepository.getAccountMovementsSorted(id, sort);
 	}
-	//TESTAR---------------------------------------
 	@Override
 	public Account createAccount(String accname, double balance) {
 		try {
@@ -57,14 +56,19 @@ public class AccountServiceImpl implements AccountService {
 		}
 	}
 	//TESTAR---------------------------------------
+	//GENERALIZAR AS EXCEPTIONS
 	@Override
 	public boolean closeAccount(int id) {
-		Account accFromBase = this.accountRepository.findById(id).orElse(null);
+		//Account accFromBase = this.accountRepository.findById(id).orElse(null);
+		Account accFromBase = null;
 		try {
 			accFromBase = accountManager.closeAccount(accFromBase);
 			this.accountRepository.save(accFromBase);
 			return true;
 		} catch (CloseAccountException e) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to close the account: " + accFromBase.getName(), e);
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to close the account: " + accFromBase.getName(), e);
 		}
 	}
