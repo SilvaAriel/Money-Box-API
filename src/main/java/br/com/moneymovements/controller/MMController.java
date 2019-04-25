@@ -59,7 +59,7 @@ public class MMController {
 	
 	@RequestMapping(value="/{account}/balance/movement", method=RequestMethod.GET)
 	public List<Movement> movement(@PathVariable("account") int account, String sort) {
-		return this.accountService.getAllMovementsByAccount(account);
+				return this.accountService.getAllMovementsByAccount(account);
 	}
 	
 	@RequestMapping(value="/{account}/balance/movement/sort", method=RequestMethod.GET)
