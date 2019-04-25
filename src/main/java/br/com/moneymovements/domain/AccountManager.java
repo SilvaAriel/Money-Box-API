@@ -17,6 +17,9 @@ public class AccountManager  {
 	}
 	
 	public Account closeAccount(Account acc) throws CloseAccountException{
+		if (acc == null) {
+			throw new CloseAccountException("Unable to close the account");
+		}
 		acc.setStatus(false);
 		return acc;
 	}
@@ -30,7 +33,7 @@ public class AccountManager  {
 	public Account withdrawCalc(Account acc, Movement mov) throws InsufficientBalanceException {
 		double newValue = acc.getBalance() - mov.getValue();
 		if (newValue < 0) {
-			throw new InsufficientBalanceException();
+			throw new InsufficientBalanceException("Insufficient balance on account");
 		} else {
 			acc.setBalance(newValue);
 			return acc;

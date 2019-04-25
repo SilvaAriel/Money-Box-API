@@ -1,10 +1,9 @@
 package br.com.moneymovements.exception;
 
-public class OpenAccountException extends Exception {
+public class SameAccountException extends Exception {
 	private static final long serialVersionUID = 1L;
-	
-	public OpenAccountException (String message) {
+
+	public SameAccountException (String message) {
 		super(message);
 	}
-
 }

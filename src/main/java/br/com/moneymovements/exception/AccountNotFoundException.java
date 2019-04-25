@@ -1,9 +1,9 @@
 package br.com.moneymovements.exception;
 
-public class OpenAccountException extends Exception {
+public class AccountNotFoundException extends Exception {
 	private static final long serialVersionUID = 1L;
 	
-	public OpenAccountException (String message) {
+	public AccountNotFoundException (String message) {
 		super(message);
 	}
 
