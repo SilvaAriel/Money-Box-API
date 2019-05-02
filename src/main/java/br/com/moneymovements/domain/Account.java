@@ -49,16 +49,4 @@ public class Account {
 		this.status = true;
 	}
 
-	/*
-	 * public Movement deposit(Movement mov) { this.balance += mov.getValue();
-	 * movements.add(mov); return mov; }
-	 * 
-	 * public Movement withdraw(Movement mov) { this.balance -= mov.getValue();
-	 * movements.add(mov); return mov; }
-	 * 
-	 * public Set<Movement> movementSortedByDate() { return null; }
-	 * 
-	 * public Set<Movement> movementSortedByValue() { return null; }
-	 */
-
 }
