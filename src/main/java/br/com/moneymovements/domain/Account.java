@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.hateoas.ResourceSupport;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Getter;
@@ -18,12 +20,12 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "account")
-public class Account {
+public class Account extends ResourceSupport {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Getter
-	private int id;
+	private int accountId;
 	@Getter
 	@Setter
 	private String name;

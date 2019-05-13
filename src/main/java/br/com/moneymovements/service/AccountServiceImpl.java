@@ -96,7 +96,7 @@ public class AccountServiceImpl implements AccountService {
 	public Movement deposit(Movement movement) throws UnableToDepositException, AccountNotFoundException {
 		Account accExists = null;
 		if (movement.getAccount() != null) {
-			accExists = accountExists(movement.getAccount().getId());
+			accExists = accountExists(movement.getAccount().getAccountId());
 		}
 		if (accExists != null) {
 			try {
@@ -117,7 +117,7 @@ public class AccountServiceImpl implements AccountService {
 	public Movement withdraw(Movement movement) throws InsufficientBalanceException, AccountNotFoundException {
 		Account accExists = null;
 		if (movement.getAccount() != null) {
-			accExists = accountExists(movement.getAccount().getId());
+			accExists = accountExists(movement.getAccount().getAccountId());
 		}
 		if (accExists != null) {
 			try {

@@ -1,8 +1,12 @@
 package br.com.moneymovements.controller;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.*;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +31,12 @@ public class MMController {
 	private AccountService accountService;
 
 	@GetMapping("/openaccount")
-	public Account createAccount(String accname, double balance) throws OpenAccountException {
-		return accountService.createAccount(accname, balance);
+	public Resource<Account> createAccount(String accname, double balance) throws OpenAccountException {
+		Account acc = accountService.createAccount(accname, balance);
+		//return new Resource<>(acc, linkTo(methodOn(Account.class).getAccountId()).withSelfRel());
+		Link selfLink = linkTo(MMController.class).slash(acc.getAccountId()).withSelfRel();
+		Link accBalance = linkTo(MMController.class).slash(acc.getAccountId()).slash("balance").withRel("account_balance");
+		return new Resource<>(acc, selfLink, accBalance);
 	}
 
 	@GetMapping("/closeaccount")
@@ -43,8 +51,16 @@ public class MMController {
 	}
 	
 	@RequestMapping(value="/{account}/deposit", method=RequestMethod.POST)
-	public Movement deposit(@PathVariable("account") int account, Movement mov) throws UnableToDepositException, AccountNotFoundException {
-		return this.accountService.deposit(mov);
+	public Resource<Movement> deposit(@PathVariable("account") int account, Movement mov) throws UnableToDepositException, AccountNotFoundException {
+		Movement movement = this.accountService.deposit(mov);
+		Link selfLink = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash(mov.getMovementId()).withSelfRel();
+		Link accLink = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).withRel("account");
+		Link accBalance = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("balance").withRel("account_balance");
+		Link accWithdraw = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("withdraw").withRel("withdraw");
+		Link accMovements = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("balance").slash("movement").withRel("movements");
+		Link accMovementsSortedByDate = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("balance").slash("movement?sort=date").withRel("movements_sort_by_date");
+		Link accMovementsSortedByValue = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("balance").slash("movement?sort=value").withRel("movements_sort_by_value");
+		return new Resource<>(movement, selfLink, accLink, accBalance, accWithdraw, accMovements, accMovementsSortedByDate, accMovementsSortedByValue);
 	}
 	
 	@RequestMapping(value="/{account}/withdraw", method=RequestMethod.POST)
@@ -59,7 +75,7 @@ public class MMController {
 	
 	@RequestMapping(value="/{account}/balance/movement", method=RequestMethod.GET)
 	public List<Movement> movement(@PathVariable("account") int account, String sort) {
-				return this.accountService.getAllMovementsByAccount(account);
+		return this.accountService.getAllMovementsByAccount(account);
 	}
 	
 	@RequestMapping(value="/{account}/balance/movement/sort", method=RequestMethod.GET)
