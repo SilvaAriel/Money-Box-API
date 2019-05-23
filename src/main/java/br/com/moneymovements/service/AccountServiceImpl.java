@@ -48,6 +48,11 @@ public class AccountServiceImpl implements AccountService {
 	public List<Movement> getAllMovementsByAccountSorted(int id, String sort) {
 		return this.movementRepository.getAccountMovementsSorted(id, sort);
 	}
+	
+	@Override
+	public Account findAccount(int account) {
+		return this.accountRepository.findAccount(account);
+	}
 
 	@Override
 	public Account createAccount(String accname, double balance) throws OpenAccountException {
