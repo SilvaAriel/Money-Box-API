@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.hateoas.ResourceSupport;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.Getter;
@@ -19,10 +21,10 @@ import lombok.Setter;
 
 @Entity
 @Table(name="movement")
-public class Movement {
+public class Movement extends ResourceSupport {
 	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Getter private int id;
+	@Getter private int movementId;
 	@Temporal(TemporalType.TIME)
 	@Getter @Setter private Date date;
 	@Getter @Setter private String detail;

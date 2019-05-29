@@ -15,6 +15,7 @@ public interface AccountService {
 
 	public List<Movement> getAllMovementsByAccount(int id);
 	List<Movement> getAllMovementsByAccountSorted(int id, String sort);
+	public Account findAccount(int id);
 	public Account createAccount(String accname, double balance) throws OpenAccountException;
 	public boolean closeAccount(int id) throws CloseAccountException, AccountNotFoundException;
 	public double getBalance(int id) throws CloseAccountException;
