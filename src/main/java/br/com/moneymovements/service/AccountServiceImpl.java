@@ -50,8 +50,14 @@ public class AccountServiceImpl implements AccountService {
 	}
 	
 	@Override
-	public Account findAccount(int account) {
-		return this.accountRepository.findAccount(account);
+	public Account findAccount(int account) throws AccountNotFoundException{
+		Account accExists = accountExists(account);
+		if (accExists != null) {
+			return accExists;
+		} else {
+			throw new AccountNotFoundException("Account not found or closed");
+		}
+
 	}
 
 	@Override
@@ -103,6 +109,7 @@ public class AccountServiceImpl implements AccountService {
 		if (movement.getAccount() != null) {
 			accExists = accountExists(movement.getAccount().getAccountId());
 		}
+		
 		if (accExists != null) {
 			try {
 				movement.setDate(new Date());

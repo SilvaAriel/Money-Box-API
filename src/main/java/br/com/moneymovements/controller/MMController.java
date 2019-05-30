@@ -96,18 +96,18 @@ public class MMController {
 	}
 
 	@RequestMapping(value = "/{account}/deposit", method = RequestMethod.POST)
-	public Resource<Movement> deposit(@PathVariable("account") int id, Movement mov)
+	public Resource<Movement> deposit(@PathVariable("account") int account, Movement mov)
 			throws UnableToDepositException, AccountNotFoundException {
 		Movement movement = this.accountService.deposit(mov);
 		Resource resource = new Resource<>(mov);
 
 		try {
-			Link self = linkTo(MMController.class).slash(id).withSelfRel();
-			Link withdraw = linkTo(methodOn(MMController.class).withdraw(id, null)).withRel("withdraw");
-			Link transfer = linkTo(MMController.class).slash(id).slash("transferTo").slash("accId").withRel("transfer");
-			Link movementByDate = linkTo(MMController.class).slash(id).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
-			Link movementByValue = linkTo(MMController.class).slash(id).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
-			Link close = linkTo(methodOn(MMController.class).closeAccount(id)).withRel("close");
+			Link self = linkTo(MMController.class).slash(account).withSelfRel();
+			Link withdraw = linkTo(methodOn(MMController.class).withdraw(account, null)).withRel("withdraw");
+			Link transfer = linkTo(MMController.class).slash(account).slash("transferTo").slash("accId").withRel("transfer");
+			Link movementByDate = linkTo(MMController.class).slash(account).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
+			Link movementByValue = linkTo(MMController.class).slash(account).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
+			Link close = linkTo(methodOn(MMController.class).closeAccount(account)).withRel("close");
 			resource.add(self, withdraw, transfer, movementByDate, movementByValue, close);
 		} catch (CloseAccountException e) {
 			e.printStackTrace();
@@ -179,7 +179,7 @@ public class MMController {
 	}
 
 	@RequestMapping(value = "/{account}/balance/movement", method = RequestMethod.GET)
-	public Resources<List<Movement>> movement(@PathVariable("account") int account) {
+	public Resources<List<Movement>> movement(@PathVariable("account") int account) throws AccountNotFoundException {
 		
 		Account acc = this.accountService.findAccount(account);
 		
@@ -217,7 +217,7 @@ public class MMController {
 	
 	//CONTINUE FROM HERE
 	@RequestMapping(value = "/{account}/balance/movement/sort", method = RequestMethod.GET)
-	public Resources<List<Movement>> sortMovement(@PathVariable("account") int account, String by) {
+	public Resources<List<Movement>> sortMovement(@PathVariable("account") int account, String by) throws UnableToDepositException, AccountNotFoundException,InsufficientBalanceException {
 		Account acc = this.accountService.findAccount(account);
 		
 		List<Movement> movements = this.accountService.getAllMovementsByAccountSorted(account, by);
