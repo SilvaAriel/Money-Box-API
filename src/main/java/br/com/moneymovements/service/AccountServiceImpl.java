@@ -79,16 +79,15 @@ public class AccountServiceImpl implements AccountService {
 	public boolean closeAccount(int id) throws CloseAccountException, AccountNotFoundException {
 		Account accExists = accountExists(id);
 		if (accExists != null) {
-			Account accFromBase = accExists;
 			try {
-				accFromBase = accountManager.closeAccount(accFromBase);
-				this.accountRepository.save(accFromBase);
+				Account accFromBase = accountManager.closeAccount(accExists);
+				this.accountRepository.save(accExists);
 				return true;
 			} catch (CloseAccountException e) {
-				throw new CloseAccountException("Unable to close the account: " + accFromBase.getName());
+				throw new CloseAccountException("Unable to close the account: " + accExists.getName());
 			} catch (Exception e) {
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-						"Unable to close the account: " + accFromBase.getName(), e);
+						"Unable to close the account: " + accExists.getName(), e);
 			}
 		} else {
 			throw new AccountNotFoundException("Account not found or closed");
