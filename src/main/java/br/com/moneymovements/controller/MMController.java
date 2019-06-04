@@ -4,6 +4,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -11,6 +12,7 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +35,16 @@ public class MMController {
 
 	@Autowired
 	private AccountService accountService;
+	
+	@GetMapping("/account/{id}")
+	public Account findAccount(@PathVariable("id") int id) throws AccountNotFoundException {
+		return accountService.findAccount(id);
+	}
+	
+	@GetMapping("/accounts")
+	public List<Account> allAccounts() {
+		return accountService.findAllAccounts();
+	}
 
 	@GetMapping("/openaccount")
 	public Resource<Account> createAccount(String accname, double balance) throws OpenAccountException, UnableToDepositException, AccountNotFoundException, InsufficientBalanceException, CloseAccountException {
@@ -118,11 +130,11 @@ public class MMController {
 
 	
 	@RequestMapping(value = "/{account}/transferTo/{accDestination}", method = RequestMethod.POST)
-	public Resource<Movement> transfer(@PathVariable("account") int accSource, @PathVariable("accDestination") int accDestination,
+	public Resource<Movement> transfer(@PathVariable("account") int accSource, @PathVariable("accDestination") int destAccount,
 			Movement mov) throws InsufficientBalanceException, UnableToDepositException, AccountNotFoundException,
 			SameAccountException, CloseAccountException {
 		
-		Movement movement = this.accountService.transfer(accSource, accDestination, mov);
+		Movement movement = this.accountService.transfer(accSource, destAccount, mov);
 		
 		Resource resource = new Resource<>(movement);
 		
@@ -166,7 +178,6 @@ public class MMController {
 		return resources;
 	}
 	
-	//CONTINUE FROM HERE
 	@RequestMapping(value = "/{account}/balance/movement/sort", method = RequestMethod.GET)
 	public Resources<List<Movement>> sortMovement(@PathVariable("account") int account, String by) throws UnableToDepositException, AccountNotFoundException,InsufficientBalanceException, CloseAccountException {
 		Account acc = this.accountService.findAccount(account);

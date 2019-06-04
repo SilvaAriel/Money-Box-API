@@ -11,4 +11,5 @@ import br.com.moneymovements.domain.Account;
 public interface GetAccount{
 
 	Account findAccount(int account);
+	List<Account> findAllAccounts();
 }

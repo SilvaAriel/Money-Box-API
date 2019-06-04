@@ -1,5 +1,6 @@
 package br.com.moneymovements.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -50,14 +51,20 @@ public class AccountServiceImpl implements AccountService {
 	}
 	
 	@Override
-	public Account findAccount(int account) throws AccountNotFoundException{
-		Account accExists = accountExists(account);
-		if (accExists != null) {
-			return accExists;
+	public Account findAccount(int id) throws AccountNotFoundException{
+		Optional<Account> account = this.accountRepository.findById(id);
+		if (account.isPresent()) {
+			return account.get();
 		} else {
 			throw new AccountNotFoundException("Account not found or closed");
 		}
 
+	}
+	
+	@Override
+	public List<Account> findAllAccounts(){
+		return this.accountRepository.findAllAccounts();
+		
 	}
 
 	@Override
@@ -77,48 +84,48 @@ public class AccountServiceImpl implements AccountService {
 
 	@Override
 	public boolean closeAccount(int id) throws CloseAccountException, AccountNotFoundException {
-		Account accExists = accountExists(id);
-		if (accExists != null) {
+		boolean accExists = accountExists(id);
+		Account account = findAccount(id);
+		if (accExists) {
 			try {
-				Account accFromBase = accountManager.closeAccount(accExists);
-				this.accountRepository.save(accExists);
+				Account accFromBase = accountManager.closeAccount(account);
+				this.accountRepository.save(account);
 				return true;
 			} catch (CloseAccountException e) {
-				throw new CloseAccountException("Unable to close the account: " + accExists.getName());
+				throw new CloseAccountException("Unable to close the account: " + account.getName());
 			} catch (Exception e) {
 				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-						"Unable to close the account: " + accExists.getName(), e);
+						"Unable to close the account: " + account.getName(), e);
 			}
 		} else {
 			throw new AccountNotFoundException("Account not found or closed");
 		}
 	}
 
-	public double getBalance(int id) throws CloseAccountException {
-		Account accExists = accountExists(id);
-		if (accExists != null) {
-			return accExists.getBalance();
+	public double getBalance(int id) throws CloseAccountException, AccountNotFoundException {
+		boolean accExists = accountExists(id);
+		Account account = findAccount(id);
+		if (accExists) {
+			return account.getBalance();
 		} else {
 			throw new CloseAccountException("Account not found or closed");
 		}
 	}
-
 	public Movement deposit(Movement movement) throws UnableToDepositException, AccountNotFoundException {
-		Account accExists = null;
-		if (movement.getAccount() != null) {
-			accExists = accountExists(movement.getAccount().getAccountId());
-		}
+		Optional<Account> accExists = Optional.ofNullable(movement.getAccount());
 		
-		if (accExists != null) {
+		if (accExists.isPresent()) {
 			try {
 				movement.setDate(new Date());
-				Account account;
-				account = this.accountManager.depositCalc(movement.getAccount(), movement);
+				Account account = this.accountManager.depositCalc(movement.getAccount(), movement);
 				this.accountRepository.save(account);
 				return this.movementRepository.save(movement);
 			} catch (UnableToDepositException e) {
 				throw new UnableToDepositException(
 						"Unable to make a deposit to account: " + movement.getAccount().getName());
+			} catch (NullPointerException e) {
+				throw new UnableToDepositException(
+						"Unable to make a deposit to account");
 			}
 		} else {
 			throw new AccountNotFoundException("Account not found or closed");
@@ -126,15 +133,12 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	public Movement withdraw(Movement movement) throws InsufficientBalanceException, AccountNotFoundException {
-		Account accExists = null;
-		if (movement.getAccount() != null) {
-			accExists = accountExists(movement.getAccount().getAccountId());
-		}
-		if (accExists != null) {
+		Optional<Account> accExists = Optional.ofNullable(movement.getAccount());
+
+		if (accExists.isPresent()) {
 			try {
 				movement.setDate(new Date());
-				Account newAccount;
-				newAccount = this.accountManager.withdrawCalc(movement.getAccount(), movement);
+				Account newAccount = this.accountManager.withdrawCalc(movement.getAccount(), movement);
 				this.accountRepository.save(newAccount);
 				this.movementRepository.save(movement);
 				return movement;
@@ -149,8 +153,8 @@ public class AccountServiceImpl implements AccountService {
 
 	public Movement transfer(int accSource, int accDestination, Movement movement)
 			throws InsufficientBalanceException, UnableToDepositException, AccountNotFoundException, SameAccountException {
-		Account source = accountExists(accSource);
-		Account destination = accountExists(accDestination);
+		Account source = findAccount(accSource);
+		Account destination = findAccount(accDestination);
 		if (source != null && destination != null) {
 			if (source != destination) {
 				try {
@@ -174,12 +178,13 @@ public class AccountServiceImpl implements AccountService {
 
 	}
 
-	public Account accountExists(int id) {
+	public boolean accountExists(int id) {
 		Optional<Account> accExists = this.accountRepository.findById(id);
 		if (accExists.isPresent() && accExists.get().isStatus()) {
-			return accExists.get();
+			return true;
 		}
-		return null;
+		
+		return false;
 
 	}
 

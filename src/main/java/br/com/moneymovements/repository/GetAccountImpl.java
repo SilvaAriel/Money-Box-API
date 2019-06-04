@@ -1,5 +1,7 @@
 package br.com.moneymovements.repository;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -18,6 +20,12 @@ public class GetAccountImpl implements GetAccount {
 	public Account findAccount(int account) {
 		Query query = entityManager.createNativeQuery(String.format("select * from account where account_id = %s", account), Account.class);
 		return (Account) query.getSingleResult();
+	}
+
+	@Override
+	public List<Account> findAllAccounts() {
+		Query query = entityManager.createNativeQuery("select * from account", Account.class);
+		return query.getResultList();
 	}
 
 
