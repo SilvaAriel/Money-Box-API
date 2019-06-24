@@ -1,5 +1,6 @@
 package br.com.moneymovements.domain;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Basic;
@@ -37,7 +38,7 @@ public class Account extends ResourceSupport {
 	@OneToMany(mappedBy = "account")
 	@Basic(fetch=FetchType.LAZY)
 	@Getter
-	private Set<Movement> movements;
+	private List<Movement> movements;
 
 	@Getter
 	@Setter
@@ -50,5 +51,5 @@ public class Account extends ResourceSupport {
 		this.balance = balance;
 		this.status = true;
 	}
-
+	
 }
