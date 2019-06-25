@@ -112,9 +112,31 @@ public class AccountServiceImpl implements AccountService {
 		}
 	}
 	public Movement deposit(Movement movement) throws UnableToDepositException, AccountNotFoundException {
-		Optional<Account> accExists = Optional.ofNullable(movement.getAccount());
+		Optional<Account> accExists = accountRepository.findAccount(movement.getAccount().getAccountId());
+		//Optional<Account> accExists = Optional.ofNullable(movement.getAccount());
 		
-		if (accExists.isPresent() && movement.getAccount().isStatus()) {
+		if (accExists.isPresent() && accExists.get().isStatus()) {
+			try {
+				movement.setDate(new Date());
+				Account account = this.accountManager.depositCalc(movement.getAccount(), movement);
+				this.accountRepository.save(account);
+				return this.movementRepository.save(movement);
+			} catch (UnableToDepositException e) {
+				throw new UnableToDepositException(
+						"Unable to make a deposit to account: " + movement.getAccount().getName());
+			} catch (NullPointerException e) {
+				throw new UnableToDepositException(
+						"Unable to make a deposit to account");
+			}
+		} else {
+			throw new AccountNotFoundException("Account not found or closed");
+		}
+	}
+	public Movement depositTest(Movement movement) throws UnableToDepositException, AccountNotFoundException {
+		Optional<Account> accExists = accountRepository.findAccount(movement.getAccount().getAccountId());
+		//Optional<Account> accExists = Optional.ofNullable(movement.getAccount());
+		
+		if (accExists.isPresent() && accExists.get().isStatus()) {
 			try {
 				movement.setDate(new Date());
 				Account account = this.accountManager.depositCalc(movement.getAccount(), movement);
