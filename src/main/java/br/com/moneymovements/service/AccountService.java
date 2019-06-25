@@ -1,7 +1,6 @@
 package br.com.moneymovements.service;
 
 import java.util.List;
-import java.util.Set;
 
 import br.com.moneymovements.domain.Account;
 import br.com.moneymovements.domain.Movement;
