@@ -1,6 +1,5 @@
 package br.com.moneymovements.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -112,9 +111,9 @@ public class AccountServiceImpl implements AccountService {
 		}
 	}
 	public Movement deposit(Movement movement) throws UnableToDepositException, AccountNotFoundException {
-		Optional<Account> accExists = Optional.ofNullable(movement.getAccount());
+		Optional<Account> accExists = accountRepository.findAccount(movement.getAccount().getAccountId());
 		
-		if (accExists.isPresent() && movement.getAccount().isStatus()) {
+		if (accExists.isPresent() && accExists.get().isStatus()) {
 			try {
 				movement.setDate(new Date());
 				Account account = this.accountManager.depositCalc(movement.getAccount(), movement);
@@ -133,9 +132,9 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	public Movement withdraw(Movement movement) throws InsufficientBalanceException, AccountNotFoundException {
-		Optional<Account> accExists = Optional.ofNullable(movement.getAccount());
+		Optional<Account> accExists = accountRepository.findAccount(movement.getAccount().getAccountId());
 
-		if (accExists.isPresent() && movement.getAccount().isStatus()) {
+		if (accExists.isPresent() && accExists.get().isStatus()) {
 			try {
 				movement.setDate(new Date());
 				Account newAccount = this.accountManager.withdrawCalc(movement.getAccount(), movement);
