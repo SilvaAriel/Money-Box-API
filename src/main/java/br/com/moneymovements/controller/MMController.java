@@ -50,7 +50,7 @@ public class MMController {
 		Account acc = accountService.createAccount(accname, balance);
 		Resource resource = new Resource<>(acc);
 		Link self = linkTo(MMController.class).slash(acc.getAccountId()).withSelfRel();
-		Link deposit = linkTo(methodOn(MMController.class).deposit(acc.getAccountId(), null)).withRel("deposit");
+		Link deposit = linkTo(methodOn(MMController.class).depositTest(acc.getAccountId(), null)).withRel("deposit");
 		Link withdraw = linkTo(methodOn(MMController.class).withdraw(acc.getAccountId(), null)).withRel("withdraw");
 		Link transfer = linkTo(MMController.class).slash(acc.getAccountId()).slash("transferTo").slash("accId").withRel("transfer");
 		Link close = linkTo(methodOn(MMController.class).closeAccount(acc.getAccountId())).withRel("close");
