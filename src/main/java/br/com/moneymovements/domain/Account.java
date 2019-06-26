@@ -45,6 +45,8 @@ public class Account extends ResourceSupport {
 
 	public Account() {}
 	
+	public Account(String account) {}
+	
 	public Account(String name, double balance) {
 		this.name = name;
 		this.balance = balance;

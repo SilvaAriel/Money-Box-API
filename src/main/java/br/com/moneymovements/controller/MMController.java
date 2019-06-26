@@ -4,7 +4,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -12,9 +11,9 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -89,7 +88,7 @@ public class MMController {
 		return new ResponseEntity<>(resource, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{account}/deposit", method = RequestMethod.POST)
+	@RequestMapping(value = "/{account}/deposit", method = RequestMethod.POST, consumes = {"application/json;charset=UTF-8"}, produces={"application/json;charset=UTF-8"})
 	public Resource<Movement> deposit(@PathVariable("account") int account, Movement mov)
 			throws UnableToDepositException, AccountNotFoundException, InsufficientBalanceException, CloseAccountException {
 		Movement movement = this.accountService.deposit(mov);
@@ -101,6 +100,21 @@ public class MMController {
 		Link movementByDate = linkTo(MMController.class).slash(account).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
 		Link movementByValue = linkTo(MMController.class).slash(account).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
 		Link close = linkTo(methodOn(MMController.class).closeAccount(account)).withRel("close");
+		resource.add(self, withdraw, transfer, movementByDate, movementByValue, close);
+		return resource;
+	}
+	@RequestMapping(value = "/deposit", method = RequestMethod.POST, consumes = {"application/json;charset=UTF-8"}, produces={"application/json;charset=UTF-8"})
+	public Resource<Movement> depositTest(@RequestBody Movement mov)
+			throws UnableToDepositException, AccountNotFoundException, InsufficientBalanceException, CloseAccountException {
+		Movement movement = this.accountService.depositTest(mov);
+		Resource resource = new Resource<>(mov);
+		
+		Link self = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).withSelfRel();
+		Link withdraw = linkTo(methodOn(MMController.class).withdraw(mov.getAccount().getAccountId(), null)).withRel("withdraw");
+		Link transfer = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("transferTo").slash("accId").withRel("transfer");
+		Link movementByDate = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
+		Link movementByValue = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
+		Link close = linkTo(methodOn(MMController.class).closeAccount(mov.getAccount().getAccountId())).withRel("close");
 		resource.add(self, withdraw, transfer, movementByDate, movementByValue, close);
 		return resource;
 	}

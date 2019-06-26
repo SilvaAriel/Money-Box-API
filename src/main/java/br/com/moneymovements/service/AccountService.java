@@ -22,6 +22,7 @@ public interface AccountService {
 	public boolean closeAccount(int id) throws CloseAccountException, AccountNotFoundException;
 	public double getBalance(int id) throws CloseAccountException, AccountNotFoundException;
 	public Movement deposit(Movement movement) throws UnableToDepositException, AccountNotFoundException;
+	public Movement depositTest(Movement movement) throws UnableToDepositException, AccountNotFoundException;
 	public Movement withdraw(Movement movement) throws InsufficientBalanceException, AccountNotFoundException;
 	public Movement transfer(int accSource, int accDestination, Movement mov) throws InsufficientBalanceException, UnableToDepositException, AccountNotFoundException, SameAccountException;
 	
