@@ -1,7 +1,6 @@
 package br.com.moneymovements.domain;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
