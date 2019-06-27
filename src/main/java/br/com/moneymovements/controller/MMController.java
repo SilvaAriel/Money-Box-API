@@ -4,6 +4,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
@@ -50,8 +51,8 @@ public class MMController {
 		Account acc = accountService.createAccount(accname, balance);
 		Resource resource = new Resource<>(acc);
 		Link self = linkTo(MMController.class).slash(acc.getAccountId()).withSelfRel();
-		Link deposit = linkTo(methodOn(MMController.class).depositTest(acc.getAccountId(), null)).withRel("deposit");
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(acc.getAccountId(), null)).withRel("withdraw");
+		Link deposit = linkTo(methodOn(MMController.class).deposit(null)).withRel("deposit");
+		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(MMController.class).slash(acc.getAccountId()).slash("transferTo").slash("accId").withRel("transfer");
 		Link close = linkTo(methodOn(MMController.class).closeAccount(acc.getAccountId())).withRel("close");
 		if (balance > 0) {
@@ -74,8 +75,8 @@ public class MMController {
 		double balance = accountService.getBalance(id);
 		Resource resource = new Resource<>(balance);
 		Link self = linkTo(MMController.class).slash(id).withSelfRel();
-		Link deposit = linkTo(methodOn(MMController.class).deposit(id, null)).withRel("deposit");
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(id, null)).withRel("withdraw");
+		Link deposit = linkTo(methodOn(MMController.class).deposit(null)).withRel("deposit");
+		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(MMController.class).slash(id).slash("transferTo").slash("accId").withRel("transfer");
 		Link movementByDate = linkTo(MMController.class).slash(id).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
 		Link movementByValue = linkTo(MMController.class).slash(id).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
@@ -88,29 +89,15 @@ public class MMController {
 		return new ResponseEntity<>(resource, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/{account}/deposit", method = RequestMethod.POST, consumes = {"application/json;charset=UTF-8"}, produces={"application/json;charset=UTF-8"})
-	public Resource<Movement> deposit(@PathVariable("account") int account, Movement mov)
-			throws UnableToDepositException, AccountNotFoundException, InsufficientBalanceException, CloseAccountException {
-		Movement movement = this.accountService.deposit(mov);
-		Resource resource = new Resource<>(mov);
-
-		Link self = linkTo(MMController.class).slash(account).withSelfRel();
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(account, null)).withRel("withdraw");
-		Link transfer = linkTo(MMController.class).slash(account).slash("transferTo").slash("accId").withRel("transfer");
-		Link movementByDate = linkTo(MMController.class).slash(account).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
-		Link movementByValue = linkTo(MMController.class).slash(account).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
-		Link close = linkTo(methodOn(MMController.class).closeAccount(account)).withRel("close");
-		resource.add(self, withdraw, transfer, movementByDate, movementByValue, close);
-		return resource;
-	}
 	@RequestMapping(value = "/deposit", method = RequestMethod.POST, consumes = {"application/json;charset=UTF-8"}, produces={"application/json;charset=UTF-8"})
-	public Resource<Movement> depositTest(@RequestBody Movement mov)
+	public Resource<Movement> deposit(@RequestBody Movement mov)
 			throws UnableToDepositException, AccountNotFoundException, InsufficientBalanceException, CloseAccountException {
-		Movement movement = this.accountService.depositTest(mov);
+		
+		Movement movement = this.accountService.deposit(mov);
 		Resource resource = new Resource<>(mov);
 		
 		Link self = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).withSelfRel();
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(mov.getAccount().getAccountId(), null)).withRel("withdraw");
+		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("transferTo").slash("accId").withRel("transfer");
 		Link movementByDate = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
 		Link movementByValue = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
@@ -119,20 +106,20 @@ public class MMController {
 		return resource;
 	}
 
-	@RequestMapping(value = "/{account}/withdraw", method = RequestMethod.POST)
-	public Resource<Movement> withdraw(@PathVariable("account") int id, Movement mov)
+	@RequestMapping(value = "/withdraw", method = RequestMethod.POST)
+	public Resource<Movement> withdraw(@RequestBody Movement mov)
 			throws InsufficientBalanceException, AccountNotFoundException, UnableToDepositException, CloseAccountException {
 		Movement movement = this.accountService.withdraw(mov);
 		
 		Resource resource = new Resource<>(movement);
 		
-		Link self = linkTo(MMController.class).slash(id).withSelfRel();
-		Link deposit = linkTo(methodOn(MMController.class).deposit(id, null)).withRel("deposit");
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(id, null)).withRel("withdraw");
-		Link transfer = linkTo(MMController.class).slash(id).slash("transferTo").slash("accId").withRel("transfer");
-		Link movementByDate = linkTo(MMController.class).slash(id).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
-		Link movementByValue = linkTo(MMController.class).slash(id).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
-		Link close = linkTo(methodOn(MMController.class).closeAccount(id)).withRel("close");
+		Link self = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).withSelfRel();
+		Link deposit = linkTo(methodOn(MMController.class).deposit(null)).withRel("deposit");
+		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
+		Link transfer = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("transferTo").slash("accId").withRel("transfer");
+		Link movementByDate = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
+		Link movementByValue = linkTo(MMController.class).slash(mov.getAccount().getAccountId()).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
+		Link close = linkTo(methodOn(MMController.class).closeAccount(mov.getAccount().getAccountId())).withRel("close");
 		if (movement.getAccount().getBalance() > 0) {
 			resource.add(self, deposit, withdraw, transfer, movementByDate, movementByValue, close);
 		} else {
@@ -153,8 +140,8 @@ public class MMController {
 		Resource resource = new Resource<>(movement);
 		
 		Link self = linkTo(MMController.class).slash(accSource).withSelfRel();
-		Link deposit = linkTo(methodOn(MMController.class).deposit(accSource, null)).withRel("deposit");
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(accSource, null)).withRel("withdraw");
+		Link deposit = linkTo(methodOn(MMController.class).deposit(null)).withRel("deposit");
+		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(MMController.class).slash(accSource).slash("transferTo").slash("accId").withRel("transfer");
 		Link movementByDate = linkTo(MMController.class).slash(accSource).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
 		Link movementByValue = linkTo(MMController.class).slash(accSource).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
@@ -178,8 +165,8 @@ public class MMController {
 		Resources resources = new Resources<>(movements);
 		
 		Link self = linkTo(MMController.class).slash(account).withSelfRel();
-		Link deposit = linkTo(methodOn(MMController.class).deposit(account, null)).withRel("deposit");
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(account, null)).withRel("withdraw");
+		Link deposit = linkTo(methodOn(MMController.class).deposit(null)).withRel("deposit");
+		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(MMController.class).slash(account).slash("transferTo").slash("accId").withRel("transfer");
 		Link movementByDate = linkTo(MMController.class).slash(account).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
 		Link movementByValue = linkTo(MMController.class).slash(account).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");
@@ -201,8 +188,8 @@ public class MMController {
 		Resources resources = new Resources<>(movements);
 		
 		Link self = linkTo(MMController.class).slash(account).withSelfRel();
-		Link deposit = linkTo(methodOn(MMController.class).deposit(account, null)).withRel("deposit");
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(account, null)).withRel("withdraw");
+		Link deposit = linkTo(methodOn(MMController.class).deposit(null)).withRel("deposit");
+		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(MMController.class).slash(account).slash("transferTo").slash("accId").withRel("transfer");
 		Link movementByDate = linkTo(MMController.class).slash(account).slash("balance").slash("movement").slash("sort?by=date").withRel("movement_date");
 		Link movementByValue = linkTo(MMController.class).slash(account).slash("balance").slash("movement").slash("sort?by=value").withRel("movement_value");

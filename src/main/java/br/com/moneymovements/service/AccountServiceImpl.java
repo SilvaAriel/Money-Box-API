@@ -1,11 +1,12 @@
 package br.com.moneymovements.service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import javax.persistence.NoResultException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -111,60 +112,41 @@ public class AccountServiceImpl implements AccountService {
 			throw new CloseAccountException("Account not found or closed");
 		}
 	}
+	
 	public Movement deposit(Movement movement) throws UnableToDepositException, AccountNotFoundException {
-		Optional<Account> accExists = Optional.ofNullable(movement.getAccount());
+		Optional<Account> accExists = accountRepository.findAccount(movement.getAccount().getAccountId());
 		
-		if (accExists.isPresent() && movement.getAccount().isStatus()) {
+		if (accExists.isPresent() && accExists.get().isStatus()) {
 			try {
 				movement.setDate(new Date());
-				Account account = this.accountManager.depositCalc(movement.getAccount(), movement);
+				Account account = this.accountManager.depositCalc(accExists.get(), movement);
 				this.accountRepository.save(account);
 				return this.movementRepository.save(movement);
 			} catch (UnableToDepositException e) {
 				throw new UnableToDepositException(
-						"Unable to make a deposit to account: " + movement.getAccount().getName());
+						"Unable to make a deposit to account: " + accExists.get().getName());
 			} catch (NullPointerException e) {
 				throw new UnableToDepositException(
 						"Unable to make a deposit to account");
-			}
-		} else {
-			throw new AccountNotFoundException("Account not found or closed");
-		}
-	}
-	public Movement depositTest(Movement movement) throws UnableToDepositException, AccountNotFoundException {
-		Optional<Account> accExists = Optional.ofNullable(movement.getAccount());
-		
-		if (accExists.isPresent() && movement.getAccount().isStatus()) {
-			try {
-				movement.setDate(new Date());
-				Account account = this.accountManager.depositCalc(movement.getAccount(), movement);
-				this.accountRepository.save(account);
-				return this.movementRepository.save(movement);
-			} catch (UnableToDepositException e) {
-				throw new UnableToDepositException(
-						"Unable to make a deposit to account: " + movement.getAccount().getName());
-			} catch (NullPointerException e) {
-				throw new UnableToDepositException(
-						"Unable to make a deposit to account");
-			}
+			} 
 		} else {
 			throw new AccountNotFoundException("Account not found or closed");
 		}
 	}
 
 	public Movement withdraw(Movement movement) throws InsufficientBalanceException, AccountNotFoundException {
-		Optional<Account> accExists = Optional.ofNullable(movement.getAccount());
-
-		if (accExists.isPresent() && movement.getAccount().isStatus()) {
+		Optional<Account> accExists = accountRepository.findAccount(movement.getAccount().getAccountId());
+		
+		if (accExists.isPresent() && accExists.get().isStatus()) {
 			try {
 				movement.setDate(new Date());
-				Account newAccount = this.accountManager.withdrawCalc(movement.getAccount(), movement);
+				Account newAccount = this.accountManager.withdrawCalc(accExists.get(), movement);
 				this.accountRepository.save(newAccount);
 				this.movementRepository.save(movement);
 				return movement;
 			} catch (InsufficientBalanceException e) {
 				throw new InsufficientBalanceException(
-						"Insufficient balance on account: " + movement.getAccount().getName());
+						"Insufficient balance on account: " + accExists.get().getName());
 			}
 		} else {
 			throw new AccountNotFoundException("Account not found or closed");

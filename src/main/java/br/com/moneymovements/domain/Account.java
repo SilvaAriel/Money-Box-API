@@ -25,6 +25,7 @@ public class Account extends ResourceSupport {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Getter
+	@Setter
 	private int accountId;
 	@Getter
 	@Setter
