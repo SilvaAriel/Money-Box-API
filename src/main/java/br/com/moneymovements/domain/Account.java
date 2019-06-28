@@ -1,7 +1,6 @@
 package br.com.moneymovements.domain;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -26,6 +25,7 @@ public class Account extends ResourceSupport {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Getter
+	@Setter
 	private int accountId;
 	@Getter
 	@Setter
@@ -45,6 +45,8 @@ public class Account extends ResourceSupport {
 	private boolean status;
 
 	public Account() {}
+	
+	public Account(String account) {}
 	
 	public Account(String name, double balance) {
 		this.name = name;
