@@ -33,6 +33,7 @@ public class Movement extends ResourceSupport {
     @JoinColumn(name = "account_id", nullable = false)
 	@JsonBackReference
 	private Account account;
+	@Getter @Setter	private int destAccountId;
 	
 	public Movement() {}
 	

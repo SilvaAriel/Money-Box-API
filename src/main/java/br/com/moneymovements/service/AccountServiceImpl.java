@@ -151,24 +151,25 @@ public class AccountServiceImpl implements AccountService {
 		}
 	}
 
-	public Movement transfer(int accSource, int accDestination, Movement movement)
+	public Movement transfer(Movement movement)
 			throws InsufficientBalanceException, UnableToDepositException, AccountNotFoundException, SameAccountException {
-		Account source = findAccount(accSource);
-		Account destination = findAccount(accDestination);
+		Account source = findAccount(movement.getAccount().getAccountId());
+		Account destination = findAccount(movement.getDestAccountId());
 		if (source != null && destination != null 
 				&& source.isStatus() && destination.isStatus()) {
 			if (source != destination) {
 				try {
 					movement.setDate(new Date());
+					movement.setAccount(source);
 					this.accountRepository.save(this.accountManager.withdrawCalc(source, movement));
 					this.accountRepository.save(this.accountManager.depositCalc(destination, movement));
 					return this.movementRepository.save(movement);
 				} catch (InsufficientBalanceException e) {
 					throw new InsufficientBalanceException(
-							"Insufficient balance on account: " + movement.getAccount().getName());
+							"Insufficient balance on account: " + source.getName());
 				} catch (UnableToDepositException e) {
 					throw new UnableToDepositException(
-							"Unable to make a deposit to account: " + movement.getAccount().getName());
+							"Unable to make a deposit to account: " + source.getName());
 				}
 			} else {
 				throw new SameAccountException("Unable to transfer to the same account");
@@ -176,7 +177,7 @@ public class AccountServiceImpl implements AccountService {
 		} else {
 			throw new AccountNotFoundException("Account not found or closed");
 		}
-
+		
 	}
 
 	public boolean accountExists(int id) {
