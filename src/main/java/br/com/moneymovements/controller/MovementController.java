@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,25 +30,23 @@ public class MovementController {
 	private AccountService accountService;
 
 	@GetMapping(params = { "id" })
-	public Resources<List<Movement>> movement(@RequestParam(value = "id") int account) throws AccountNotFoundException,
+	public Resources<List<Movement>> movement(@RequestParam(value = "id") int acc) throws AccountNotFoundException,
 			CloseAccountException, InsufficientBalanceException, UnableToDepositException, SameAccountException {
 
-		Account acc = this.accountService.findAccount(account);
+		Account account = this.accountService.findAccount(acc);
 
-		List<Movement> movements = this.accountService.getAllMovementsByAccount(account);
+		List<Movement> movements = this.accountService.getAllMovementsByAccount(acc);
 
 		Resources resources = new Resources<>(movements);
 
-		Link self = linkTo(MMController.class).slash(account).withSelfRel();
+		Link self = linkTo(methodOn(AccountController.class).getAccount(account.getAccountId())).withSelfRel();
 		Link deposit = linkTo(methodOn(MMController.class).deposit(null)).withRel("deposit");
 		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
-		Link transfer = linkTo(methodOn(MMController.class).transfer(null)).withRel("transfer");
-		Link movementByDate = linkTo(MMController.class).slash(account).slash("balance").slash("movement")
-				.slash("sort?by=date").withRel("movement_date");
-		Link movementByValue = linkTo(MMController.class).slash(account).slash("balance").slash("movement")
-				.slash("sort?by=value").withRel("movement_value");
-		Link close = linkTo(methodOn(MMController.class).closeAccount(account)).withRel("close");
-		if (acc.getBalance() > 0) {
+		Link transfer = linkTo(methodOn(TransferController.class).transfer(null)).withRel("transfer");
+		Link close = linkTo(methodOn(AccountController.class).closeAccount(account.getAccountId())).withRel("close");
+		Link movementByDate = linkTo(methodOn(MovementController.class).movement(account.getAccountId(), "date")).withRel("movement_by_date");
+		Link movementByValue = linkTo(methodOn(MovementController.class).movement(account.getAccountId(), "value")).withRel("movement_by_value");
+		if (account.getBalance() > 0) {
 			resources.add(self, deposit, withdraw, transfer, movementByDate, movementByValue, close);
 		} else {
 			resources.add(self, deposit, movementByDate, movementByValue, close);
@@ -58,26 +54,24 @@ public class MovementController {
 		return resources;
 	}
 
-	@GetMapping(params = {"id", "by"})
-	public Resources<List<Movement>> movement(@RequestParam(value = "id") int account, @RequestParam(value = "by") String by)
-			throws UnableToDepositException, AccountNotFoundException, InsufficientBalanceException,
-			CloseAccountException, SameAccountException {
-		Account acc = this.accountService.findAccount(account);
+	@GetMapping(params = { "id", "by" })
+	public Resources<List<Movement>> movement(@RequestParam(value = "id") int acc,
+			@RequestParam(value = "by") String by) throws UnableToDepositException, AccountNotFoundException,
+			InsufficientBalanceException, CloseAccountException, SameAccountException {
+		Account account = this.accountService.findAccount(acc);
 
-		List<Movement> movements = this.accountService.getAllMovementsByAccountSorted(account, by);
+		List<Movement> movements = this.accountService.getAllMovementsByAccountSorted(acc, by);
 
 		Resources resources = new Resources<>(movements);
 
-		Link self = linkTo(MMController.class).slash(account).withSelfRel();
-		Link deposit = linkTo(methodOn(MMController.class).deposit(null)).withRel("deposit");
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
+		Link self = linkTo(methodOn(AccountController.class).getAccount(account.getAccountId())).withSelfRel();
+		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
+		Link withdraw = linkTo(methodOn(WithdrawController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(methodOn(MMController.class).transfer(null)).withRel("transfer");
-		Link movementByDate = linkTo(MMController.class).slash(account).slash("balance").slash("movement")
-				.slash("sort?by=date").withRel("movement_date");
-		Link movementByValue = linkTo(MMController.class).slash(account).slash("balance").slash("movement")
-				.slash("sort?by=value").withRel("movement_value");
-		Link close = linkTo(methodOn(MMController.class).closeAccount(account)).withRel("close");
-		if (acc.getBalance() > 0) {
+		Link movementByDate = linkTo(methodOn(MovementController.class).movement(account.getAccountId(), "date")).withRel("movement_by_date");
+		Link movementByValue = linkTo(methodOn(MovementController.class).movement(account.getAccountId(), "value")).withRel("movement_by_value");
+		Link close = linkTo(methodOn(MMController.class).closeAccount(account.getAccountId())).withRel("close");
+		if (account.getBalance() > 0) {
 			resources.add(self, deposit, withdraw, transfer, movementByDate, movementByValue, close);
 		} else {
 			resources.add(self, deposit, movementByDate, movementByValue, close);
