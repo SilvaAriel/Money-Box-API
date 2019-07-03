@@ -26,7 +26,7 @@ public class TransferController {
 	@Autowired
 	private AccountService accountService;
 
-	@PostMapping()
+	@PostMapping(consumes = {"application/json;charset=UTF-8"}, produces={"application/json;charset=UTF-8"})
 	public Resource<Movement> transfer(@RequestBody Movement mov) throws InsufficientBalanceException,
 			UnableToDepositException, AccountNotFoundException, SameAccountException, CloseAccountException {
 

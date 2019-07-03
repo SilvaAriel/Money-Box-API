@@ -26,7 +26,7 @@ public class WithdrawController {
 	@Autowired
 	private AccountService accountService;
 
-	@PostMapping()
+	@PostMapping(consumes = {"application/json;charset=UTF-8"}, produces={"application/json;charset=UTF-8"})
 	public Resource<Movement> withdraw(@RequestBody Movement mov)
 			throws InsufficientBalanceException, AccountNotFoundException, UnableToDepositException, CloseAccountException, SameAccountException {
 		Movement movement = this.accountService.withdraw(mov);
