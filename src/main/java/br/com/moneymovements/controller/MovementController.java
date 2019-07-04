@@ -40,8 +40,8 @@ public class MovementController {
 		Resources resources = new Resources<>(movements);
 
 		Link self = linkTo(methodOn(AccountController.class).getAccount(account.getAccountId())).withSelfRel();
-		Link deposit = linkTo(methodOn(MMController.class).deposit(null)).withRel("deposit");
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
+		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
+		Link withdraw = linkTo(methodOn(WithdrawController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(methodOn(TransferController.class).transfer(null)).withRel("transfer");
 		Link close = linkTo(methodOn(AccountController.class).closeAccount(account.getAccountId())).withRel("close");
 		Link movementByDate = linkTo(methodOn(MovementController.class).movement(account.getAccountId(), "date")).withRel("movement_by_date");
@@ -67,10 +67,10 @@ public class MovementController {
 		Link self = linkTo(methodOn(AccountController.class).getAccount(account.getAccountId())).withSelfRel();
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
 		Link withdraw = linkTo(methodOn(WithdrawController.class).withdraw(null)).withRel("withdraw");
-		Link transfer = linkTo(methodOn(MMController.class).transfer(null)).withRel("transfer");
+		Link transfer = linkTo(methodOn(TransferController.class).transfer(null)).withRel("transfer");
 		Link movementByDate = linkTo(methodOn(MovementController.class).movement(account.getAccountId(), "date")).withRel("movement_by_date");
 		Link movementByValue = linkTo(methodOn(MovementController.class).movement(account.getAccountId(), "value")).withRel("movement_by_value");
-		Link close = linkTo(methodOn(MMController.class).closeAccount(account.getAccountId())).withRel("close");
+		Link close = linkTo(methodOn(AccountController.class).closeAccount(account.getAccountId())).withRel("close");
 		if (account.getBalance() > 0) {
 			resources.add(self, deposit, withdraw, transfer, movementByDate, movementByValue, close);
 		} else {
