@@ -25,10 +25,9 @@ public class AccountVO extends ResourceSupport {
 	@Getter
 	@Setter
 	private double balance;
-
+	@Setter
 	@Getter
 	private List<Movement> movements;
-
 	@Getter
 	@Setter
 	private boolean status;

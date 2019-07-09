@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.moneymovements.converter.DozerConverter;
 import br.com.moneymovements.domain.Account;
 import br.com.moneymovements.domain.Movement;
 import br.com.moneymovements.exception.AccountNotFoundException;
@@ -21,6 +22,7 @@ import br.com.moneymovements.exception.InsufficientBalanceException;
 import br.com.moneymovements.exception.SameAccountException;
 import br.com.moneymovements.exception.UnableToDepositException;
 import br.com.moneymovements.service.AccountService;
+import br.com.moneymovements.vo.MovementVO;
 
 @RestController
 @RequestMapping("/api/movement")
@@ -30,14 +32,15 @@ public class MovementController {
 	private AccountService accountService;
 
 	@GetMapping(params = { "id" })
-	public Resources<List<Movement>> movement(@RequestParam(value = "id") int acc) throws AccountNotFoundException,
+	public Resources<List<MovementVO>> movement(@RequestParam(value = "id") int acc) throws AccountNotFoundException,
 			CloseAccountException, InsufficientBalanceException, UnableToDepositException, SameAccountException {
 
 		Account account = this.accountService.findAccount(acc);
 
 		List<Movement> movements = this.accountService.getAllMovementsByAccount(acc);
+		List<MovementVO> movementsVO = DozerConverter.parseObjectList(movements, MovementVO.class);
 
-		Resources resources = new Resources<>(movements);
+		Resources resources = new Resources<>(movementsVO);
 
 		Link self = linkTo(methodOn(AccountController.class).getAccount(account.getAccountId())).withSelfRel();
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
@@ -55,14 +58,15 @@ public class MovementController {
 	}
 
 	@GetMapping(params = { "id", "by" })
-	public Resources<List<Movement>> movement(@RequestParam(value = "id") int acc,
+	public Resources<List<MovementVO>> movement(@RequestParam(value = "id") int acc,
 			@RequestParam(value = "by") String by) throws UnableToDepositException, AccountNotFoundException,
 			InsufficientBalanceException, CloseAccountException, SameAccountException {
 		Account account = this.accountService.findAccount(acc);
 
 		List<Movement> movements = this.accountService.getAllMovementsByAccountSorted(acc, by);
+		List<MovementVO> movementsVO = DozerConverter.parseObjectList(movements, MovementVO.class);
 
-		Resources resources = new Resources<>(movements);
+		Resources resources = new Resources<>(movementsVO);
 
 		Link self = linkTo(methodOn(AccountController.class).getAccount(account.getAccountId())).withSelfRel();
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");

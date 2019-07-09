@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.moneymovements.converter.DozerConverter;
 import br.com.moneymovements.domain.Movement;
 import br.com.moneymovements.exception.AccountNotFoundException;
 import br.com.moneymovements.exception.CloseAccountException;
@@ -18,6 +19,7 @@ import br.com.moneymovements.exception.InsufficientBalanceException;
 import br.com.moneymovements.exception.SameAccountException;
 import br.com.moneymovements.exception.UnableToDepositException;
 import br.com.moneymovements.service.AccountService;
+import br.com.moneymovements.vo.MovementVO;
 
 @RestController
 @RequestMapping("/api/deposit")
@@ -27,11 +29,12 @@ public class DepositController {
 	private AccountService accountService;
 
 	@PostMapping(consumes = {"application/json;charset=UTF-8"}, produces={"application/json;charset=UTF-8"})
-	public Resource<Movement> deposit(@RequestBody Movement mov)
+	public Resource<MovementVO> deposit(@RequestBody Movement mov)
 			throws UnableToDepositException, AccountNotFoundException, InsufficientBalanceException, CloseAccountException, SameAccountException {
 			
 		Movement movement = this.accountService.deposit(mov);
-		Resource resource = new Resource<>(mov);
+		MovementVO movementVO = DozerConverter.parseObject(movement, MovementVO.class);
+		Resource resource = new Resource<>(movementVO);
 		
 		Link self = linkTo(methodOn(AccountController.class).getAccount(movement.getAccount().getAccountId())).withSelfRel();
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
