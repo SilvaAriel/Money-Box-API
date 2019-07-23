@@ -12,9 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,21 +46,20 @@ public class AccountController {
 		return DozerConverter.parseObjectList(accountService.findAllAccounts(), AccountVO.class);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, consumes = { "application/json;charset=UTF-8" }, produces = {
-			"application/json;charset=UTF-8" })
-	public Resource<AccountVO> account(@RequestBody Account acc)
+	@PostMapping(consumes = { "application/json;charset=UTF-8" }, produces = { "application/json;charset=UTF-8" })
+	public Resource<AccountVO> account(@RequestBody AccountVO acc)
 			throws UnableToDepositException, AccountNotFoundException, InsufficientBalanceException,
 			CloseAccountException, SameAccountException, OpenAccountException {
 
-		Account account = accountService.createAccount(acc.getName(), acc.getBalance());
-		AccountVO accountVO = DozerConverter.parseObject(account, AccountVO.class);
+		Account accountCreated = accountService.createAccount(acc.getName(), acc.getBalance());
+		AccountVO accountVO = DozerConverter.parseObject(accountCreated, AccountVO.class);
 		Resource resource = new Resource<>(accountVO);
-		Link self = linkTo(methodOn(AccountController.class).getAccount(account.getAccountId())).withSelfRel();
+		Link self = linkTo(methodOn(AccountController.class).getAccount(accountVO.getAccountId())).withSelfRel();
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
 		Link withdraw = linkTo(methodOn(WithdrawController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(methodOn(TransferController.class).transfer(null)).withRel("transfer");
-		Link close = linkTo(methodOn(AccountController.class).closeAccount(account.getAccountId())).withRel("close");
-		if (account.getBalance() > 0) {
+		Link close = linkTo(methodOn(AccountController.class).closeAccount(accountVO.getAccountId())).withRel("close");
+		if (accountVO.getBalance() > 0) {
 			resource.add(self, deposit, withdraw, transfer, close);
 		} else {
 			resource.add(self, deposit, close);

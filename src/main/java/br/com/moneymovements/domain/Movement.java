@@ -25,7 +25,6 @@ public class Movement extends ResourceSupport {
 	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Getter private int movementId;
-	@Temporal(TemporalType.TIME)
 	@Getter @Setter private Date date;
 	@Getter @Setter private String detail;
 	@Getter @Setter private float value;
