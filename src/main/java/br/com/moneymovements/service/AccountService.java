@@ -10,6 +10,7 @@ import br.com.moneymovements.exception.InsufficientBalanceException;
 import br.com.moneymovements.exception.OpenAccountException;
 import br.com.moneymovements.exception.SameAccountException;
 import br.com.moneymovements.exception.UnableToDepositException;
+import br.com.moneymovements.vo.AccountVO;
 import br.com.moneymovements.vo.MovementVO;
 
 public interface AccountService {
@@ -17,8 +18,8 @@ public interface AccountService {
 	public List<MovementVO> getAllMovementsByAccount(int id);
 	public List<MovementVO> getAllMovementsByAccountSorted(int id, String sort);
 	public Account findAccount(int id) throws AccountNotFoundException;
-	public List<Account> findAllAccounts();
-	public Account createAccount(String accname, double balance) throws OpenAccountException;
+	public List<AccountVO> findAllAccounts();
+	public AccountVO createAccount(String accname, double balance) throws OpenAccountException;
 	public boolean closeAccount(int id) throws CloseAccountException, AccountNotFoundException;
 	public double getBalance(int id) throws CloseAccountException, AccountNotFoundException;
 	public MovementVO deposit(MovementVO movement) throws UnableToDepositException, AccountNotFoundException;

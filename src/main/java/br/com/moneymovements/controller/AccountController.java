@@ -43,7 +43,7 @@ public class AccountController {
 
 	@GetMapping()
 	public List<AccountVO> getAccount() throws AccountNotFoundException {
-		return DozerConverter.parseObjectList(accountService.findAllAccounts(), AccountVO.class);
+		return accountService.findAllAccounts();
 	}
 
 	@PostMapping(consumes = { "application/json;charset=UTF-8" }, produces = { "application/json;charset=UTF-8" })
@@ -51,8 +51,7 @@ public class AccountController {
 			throws UnableToDepositException, AccountNotFoundException, InsufficientBalanceException,
 			CloseAccountException, SameAccountException, OpenAccountException {
 
-		Account accountCreated = accountService.createAccount(acc.getName(), acc.getBalance());
-		AccountVO accountVO = DozerConverter.parseObject(accountCreated, AccountVO.class);
+		AccountVO accountVO = accountService.createAccount(acc.getName(), acc.getBalance());
 		Resource resource = new Resource<>(accountVO);
 		Link self = linkTo(methodOn(AccountController.class).getAccount(accountVO.getAccountId())).withSelfRel();
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");

@@ -23,6 +23,7 @@ import br.com.moneymovements.exception.SameAccountException;
 import br.com.moneymovements.exception.UnableToDepositException;
 import br.com.moneymovements.repository.AccountRepository;
 import br.com.moneymovements.repository.MovementRepository;
+import br.com.moneymovements.vo.AccountVO;
 import br.com.moneymovements.vo.MovementVO;
 import lombok.Getter;
 
@@ -63,17 +64,16 @@ public class AccountServiceImpl implements AccountService {
 	}
 	
 	@Override
-	public List<Account> findAllAccounts(){
-		return this.accountRepository.findAllAccounts();
-		
+	public List<AccountVO> findAllAccounts(){
+		return DozerConverter.parseObjectList(this.accountRepository.findAllAccounts(), AccountVO.class);
 	}
 
 	@Override
-	public Account createAccount(String accname, double balance) throws OpenAccountException {
+	public AccountVO createAccount(String accname, double balance) throws OpenAccountException {
 		try {
 			Account accountCreated = accountManager.createAccount(accname, balance);
 			this.accountRepository.save(accountCreated);
-			return accountCreated;
+			return DozerConverter.parseObject(accountCreated, AccountVO.class);
 		} catch (OpenAccountException e) {
 			throw new OpenAccountException("Unable to open the account: " + accname);
 		} catch (Exception e) {
