@@ -37,8 +37,7 @@ public class MovementController {
 
 		Account account = this.accountService.findAccount(acc);
 
-		List<Movement> movements = this.accountService.getAllMovementsByAccount(acc);
-		List<MovementVO> movementsVO = DozerConverter.parseObjectList(movements, MovementVO.class);
+		List<MovementVO> movementsVO = this.accountService.getAllMovementsByAccount(acc);
 
 		Resources resources = new Resources<>(movementsVO);
 
@@ -63,8 +62,7 @@ public class MovementController {
 			InsufficientBalanceException, CloseAccountException, SameAccountException {
 		Account account = this.accountService.findAccount(acc);
 
-		List<Movement> movements = this.accountService.getAllMovementsByAccountSorted(acc, by);
-		List<MovementVO> movementsVO = DozerConverter.parseObjectList(movements, MovementVO.class);
+		List<MovementVO> movementsVO = this.accountService.getAllMovementsByAccountSorted(acc, by);
 
 		Resources resources = new Resources<>(movementsVO);
 

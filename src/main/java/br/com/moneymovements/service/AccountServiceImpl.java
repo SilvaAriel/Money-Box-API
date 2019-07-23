@@ -42,13 +42,13 @@ public class AccountServiceImpl implements AccountService {
 	private Set<Account> accounts = new HashSet<>();
 
 	@Override
-	public List<Movement> getAllMovementsByAccount(int id) {
-		return this.movementRepository.getAccountMovements(id);
+	public List<MovementVO> getAllMovementsByAccount(int id) {
+		return DozerConverter.parseObjectList(this.movementRepository.getAccountMovements(id), MovementVO.class);
 	}
 
 	@Override
-	public List<Movement> getAllMovementsByAccountSorted(int id, String sort) {
-		return this.movementRepository.getAccountMovementsSorted(id, sort);
+	public List<MovementVO> getAllMovementsByAccountSorted(int id, String sort) {
+		return DozerConverter.parseObjectList(this.movementRepository.getAccountMovementsSorted(id, sort), MovementVO.class);
 	}
 	
 	@Override
@@ -135,7 +135,7 @@ public class AccountServiceImpl implements AccountService {
 		}
 	}
 
-	public Movement withdraw(Movement movement) throws InsufficientBalanceException, AccountNotFoundException {
+	public MovementVO withdraw(Movement movement) throws InsufficientBalanceException, AccountNotFoundException {
 		Optional<Account> accountExists = accountRepository.findAccount(movement.getAccount().getAccountId());
 		
 		if (accountExists.isPresent() && accountExists.get().isStatus()) {
@@ -144,7 +144,7 @@ public class AccountServiceImpl implements AccountService {
 				Account newAccount = this.accountManager.withdrawCalc(accountExists.get(), movement);
 				this.accountRepository.save(newAccount);
 				this.movementRepository.save(movement);
-				return movement;
+				return DozerConverter.parseObject(movement, MovementVO.class);
 			} catch (InsufficientBalanceException e) {
 				throw new InsufficientBalanceException(
 						"Insufficient balance on account: " + accountExists.get().getName());
@@ -154,10 +154,12 @@ public class AccountServiceImpl implements AccountService {
 		}
 	}
 
-	public Movement transfer(Movement movement)
+	public MovementVO transfer(Movement movement)
 			throws InsufficientBalanceException, UnableToDepositException, AccountNotFoundException, SameAccountException {
+		
 		Account accountSource = findAccount(movement.getAccount().getAccountId());
 		Account accountDestination = findAccount(movement.getDestAccountId());
+		
 		if (accountSource != null && accountDestination != null 
 				&& accountSource.isStatus() && accountDestination.isStatus()) {
 			if (accountSource != accountDestination) {
@@ -166,7 +168,7 @@ public class AccountServiceImpl implements AccountService {
 					movement.setAccount(accountSource);
 					this.accountRepository.save(this.accountManager.withdrawCalc(accountSource, movement));
 					this.accountRepository.save(this.accountManager.depositCalc(accountDestination, movement));
-					return this.movementRepository.save(movement);
+					return DozerConverter.parseObject(this.movementRepository.save(movement), MovementVO.class);
 				} catch (InsufficientBalanceException e) {
 					throw new InsufficientBalanceException(
 							"Insufficient balance on account: " + accountSource.getName());

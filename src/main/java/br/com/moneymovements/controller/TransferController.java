@@ -33,20 +33,20 @@ public class TransferController {
 	public Resource<MovementVO> transfer(@RequestBody Movement mov) throws InsufficientBalanceException,
 			UnableToDepositException, AccountNotFoundException, SameAccountException, CloseAccountException {
 
-		Movement movement = this.accountService.transfer(mov);
+		MovementVO movementVO = this.accountService.transfer(mov);
 		
-		Account account = this.accountService.findAccount(movement.getAccount().getAccountId());
+		Account account = this.accountService.findAccount(movementVO.getAccount().getAccountId());
 		
-		MovementVO movementVO = DozerConverter.parseObject(movement, MovementVO.class);
+		//MovementVO movementVO = DozerConverter.parseObject(movementVO, MovementVO.class);
 		Resource resource = new Resource<>(movementVO);
 		
-		Link self = linkTo(methodOn(AccountController.class).getAccount(movement.getAccount().getAccountId())).withSelfRel();
+		Link self = linkTo(methodOn(AccountController.class).getAccount(movementVO.getAccount().getAccountId())).withSelfRel();
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
 		Link withdraw = linkTo(methodOn(WithdrawController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(methodOn(TransferController.class).transfer(null)).withRel("transfer");
-		Link close = linkTo(methodOn(AccountController.class).closeAccount(movement.getAccount().getAccountId())).withRel("close");
-		Link movementByDate = linkTo(methodOn(MovementController.class).movement(movement.getAccount().getAccountId(), "date")).withRel("movement_by_date");
-		Link movementByValue = linkTo(methodOn(MovementController.class).movement(movement.getAccount().getAccountId(), "value")).withRel("movement_by_value");
+		Link close = linkTo(methodOn(AccountController.class).closeAccount(movementVO.getAccount().getAccountId())).withRel("close");
+		Link movementByDate = linkTo(methodOn(MovementController.class).movement(movementVO.getAccount().getAccountId(), "date")).withRel("movement_by_date");
+		Link movementByValue = linkTo(methodOn(MovementController.class).movement(movementVO.getAccount().getAccountId(), "value")).withRel("movement_by_value");
 		if (account.getBalance() > 0) {
 			resource.add(self, deposit, withdraw, transfer, movementByDate, movementByValue, close);
 		} else {
