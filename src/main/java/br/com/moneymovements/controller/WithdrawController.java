@@ -30,8 +30,9 @@ public class WithdrawController {
 	private AccountService accountService;
 
 	@PostMapping(consumes = {"application/json;charset=UTF-8"}, produces={"application/json;charset=UTF-8"})
-	public Resource<MovementVO> withdraw(@RequestBody Movement mov)
+	public Resource<MovementVO> withdraw(@RequestBody MovementVO mov)
 			throws InsufficientBalanceException, AccountNotFoundException, UnableToDepositException, CloseAccountException, SameAccountException {
+		
 		MovementVO movementVO = this.accountService.withdraw(mov);
 		Account account = this.accountService.findAccount(movementVO.getAccount().getAccountId());
 		Resource resource = new Resource<>(movementVO);

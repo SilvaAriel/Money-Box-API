@@ -30,14 +30,13 @@ public class TransferController {
 	private AccountService accountService;
 
 	@PostMapping(consumes = {"application/json;charset=UTF-8"}, produces={"application/json;charset=UTF-8"})
-	public Resource<MovementVO> transfer(@RequestBody Movement mov) throws InsufficientBalanceException,
+	public Resource<MovementVO> transfer(@RequestBody MovementVO movement) throws InsufficientBalanceException,
 			UnableToDepositException, AccountNotFoundException, SameAccountException, CloseAccountException {
 
-		MovementVO movementVO = this.accountService.transfer(mov);
+		MovementVO movementVO = this.accountService.transfer(movement);
 		
 		Account account = this.accountService.findAccount(movementVO.getAccount().getAccountId());
 		
-		//MovementVO movementVO = DozerConverter.parseObject(movementVO, MovementVO.class);
 		Resource resource = new Resource<>(movementVO);
 		
 		Link self = linkTo(methodOn(AccountController.class).getAccount(movementVO.getAccount().getAccountId())).withSelfRel();

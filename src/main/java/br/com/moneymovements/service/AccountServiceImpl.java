@@ -88,7 +88,7 @@ public class AccountServiceImpl implements AccountService {
 		Account accountEntity = findAccount(id);
 		if (accExists) {
 			try {
-				Account accFromBase = accountManager.closeAccount(accountEntity);
+				accountManager.closeAccount(accountEntity);
 				this.accountRepository.save(accountEntity);
 				return true;
 			} catch (CloseAccountException e) {
@@ -135,16 +135,17 @@ public class AccountServiceImpl implements AccountService {
 		}
 	}
 
-	public MovementVO withdraw(Movement movement) throws InsufficientBalanceException, AccountNotFoundException {
+	public MovementVO withdraw(MovementVO movement) throws InsufficientBalanceException, AccountNotFoundException {
 		Optional<Account> accountExists = accountRepository.findAccount(movement.getAccount().getAccountId());
 		
 		if (accountExists.isPresent() && accountExists.get().isStatus()) {
 			try {
 				movement.setDate(new Date());
-				Account newAccount = this.accountManager.withdrawCalc(accountExists.get(), movement);
+				Movement movementConverted = DozerConverter.parseObject(movement, Movement.class);
+				Account newAccount = this.accountManager.withdrawCalc(accountExists.get(), movementConverted);
 				this.accountRepository.save(newAccount);
-				this.movementRepository.save(movement);
-				return DozerConverter.parseObject(movement, MovementVO.class);
+				this.movementRepository.save(movementConverted);
+				return DozerConverter.parseObject(movementConverted, MovementVO.class);
 			} catch (InsufficientBalanceException e) {
 				throw new InsufficientBalanceException(
 						"Insufficient balance on account: " + accountExists.get().getName());
@@ -154,7 +155,7 @@ public class AccountServiceImpl implements AccountService {
 		}
 	}
 
-	public MovementVO transfer(Movement movement)
+	public MovementVO transfer(MovementVO movement)
 			throws InsufficientBalanceException, UnableToDepositException, AccountNotFoundException, SameAccountException {
 		
 		Account accountSource = findAccount(movement.getAccount().getAccountId());
@@ -166,9 +167,10 @@ public class AccountServiceImpl implements AccountService {
 				try {
 					movement.setDate(new Date());
 					movement.setAccount(accountSource);
-					this.accountRepository.save(this.accountManager.withdrawCalc(accountSource, movement));
-					this.accountRepository.save(this.accountManager.depositCalc(accountDestination, movement));
-					return DozerConverter.parseObject(this.movementRepository.save(movement), MovementVO.class);
+					Movement movementConverted = DozerConverter.parseObject(movement, Movement.class);
+					this.accountRepository.save(this.accountManager.withdrawCalc(accountSource, movementConverted));
+					this.accountRepository.save(this.accountManager.depositCalc(accountDestination, movementConverted));
+					return DozerConverter.parseObject(this.movementRepository.save(movementConverted), MovementVO.class);
 				} catch (InsufficientBalanceException e) {
 					throw new InsufficientBalanceException(
 							"Insufficient balance on account: " + accountSource.getName());
