@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.moneymovements.converter.DozerConverter;
-import br.com.moneymovements.domain.Account;
 import br.com.moneymovements.exception.AccountNotFoundException;
 import br.com.moneymovements.exception.CloseAccountException;
 import br.com.moneymovements.exception.InsufficientBalanceException;
@@ -47,7 +46,7 @@ public class AccountController {
 	}
 
 	@PostMapping(consumes = { "application/json;charset=UTF-8" }, produces = { "application/json;charset=UTF-8" })
-	public Resource<AccountVO> account(@RequestBody AccountVO acc)
+	public ResponseEntity<Resource<AccountVO>> account(@RequestBody AccountVO acc)
 			throws UnableToDepositException, AccountNotFoundException, InsufficientBalanceException,
 			CloseAccountException, SameAccountException, OpenAccountException {
 
@@ -63,7 +62,8 @@ public class AccountController {
 		} else {
 			resource.add(self, deposit, close);
 		}
-		return resource;
+		//return resource;
+		return new ResponseEntity<>(resource, HttpStatus.CREATED);
 
 	}
 
