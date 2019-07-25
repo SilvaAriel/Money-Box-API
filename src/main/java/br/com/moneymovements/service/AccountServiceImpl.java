@@ -114,15 +114,15 @@ public class AccountServiceImpl implements AccountService {
 	
 	public MovementVO deposit(MovementVO movement) throws UnableToDepositException, AccountNotFoundException {
 		Optional<Account> accountExists = accountRepository.findAccount(movement.getAccount().getAccountId());
-		
-		Movement mov = DozerConverter.parseObject(movement, Movement.class);
-		
+				
 		if (accountExists.isPresent() && accountExists.get().isStatus()) {
 			try {
-				mov.setDate(new Date());
-				Account account = this.accountManager.depositCalc(accountExists.get(), mov);
+				movement.setAccount(this.findAccount(movement.getAccount().getAccountId()));
+				Movement movementConverted = DozerConverter.parseObject(movement, Movement.class);
+				movementConverted.setDate(new Date());
+				Account account = this.accountManager.depositCalc(accountExists.get(), movementConverted);
 				this.accountRepository.save(account);
-				return DozerConverter.parseObject(this.movementRepository.save(mov), MovementVO.class);
+				return DozerConverter.parseObject(this.movementRepository.save(movementConverted), MovementVO.class);
 			} catch (UnableToDepositException e) {
 				throw new UnableToDepositException(
 						"Unable to make a deposit to account: " + accountExists.get().getName());
@@ -140,6 +140,7 @@ public class AccountServiceImpl implements AccountService {
 		
 		if (accountExists.isPresent() && accountExists.get().isStatus()) {
 			try {
+				movement.setAccount(this.findAccount(movement.getAccount().getAccountId()));
 				movement.setDate(new Date());
 				Movement movementConverted = DozerConverter.parseObject(movement, Movement.class);
 				Account newAccount = this.accountManager.withdrawCalc(accountExists.get(), movementConverted);
