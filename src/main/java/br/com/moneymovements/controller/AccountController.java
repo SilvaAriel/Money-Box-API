@@ -62,7 +62,6 @@ public class AccountController {
 		} else {
 			resource.add(self, deposit, close);
 		}
-		//return resource;
 		return new ResponseEntity<>(resource, HttpStatus.CREATED);
 
 	}
