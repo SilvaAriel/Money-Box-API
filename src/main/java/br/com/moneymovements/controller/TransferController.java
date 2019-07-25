@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.moneymovements.converter.DozerConverter;
+import br.com.moneymovements.domain.Account;
 import br.com.moneymovements.domain.Movement;
 import br.com.moneymovements.exception.AccountNotFoundException;
 import br.com.moneymovements.exception.CloseAccountException;
@@ -18,6 +20,7 @@ import br.com.moneymovements.exception.InsufficientBalanceException;
 import br.com.moneymovements.exception.SameAccountException;
 import br.com.moneymovements.exception.UnableToDepositException;
 import br.com.moneymovements.service.AccountService;
+import br.com.moneymovements.vo.MovementVO;
 
 @RestController
 @RequestMapping("/api/transfer")
@@ -27,21 +30,23 @@ public class TransferController {
 	private AccountService accountService;
 
 	@PostMapping(consumes = {"application/json;charset=UTF-8"}, produces={"application/json;charset=UTF-8"})
-	public Resource<Movement> transfer(@RequestBody Movement mov) throws InsufficientBalanceException,
+	public Resource<MovementVO> transfer(@RequestBody MovementVO movement) throws InsufficientBalanceException,
 			UnableToDepositException, AccountNotFoundException, SameAccountException, CloseAccountException {
 
-		Movement movement = this.accountService.transfer(mov);
-
-		Resource resource = new Resource<>(mov);
-
-		Link self = linkTo(methodOn(AccountController.class).getAccount(movement.getAccount().getAccountId())).withSelfRel();
+		MovementVO movementVO = this.accountService.transfer(movement);
+		
+		Account account = this.accountService.findAccount(movementVO.getAccount().getAccountId());
+		
+		Resource resource = new Resource<>(movementVO);
+		
+		Link self = linkTo(methodOn(AccountController.class).getAccount(movementVO.getAccount().getAccountId())).withSelfRel();
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
 		Link withdraw = linkTo(methodOn(WithdrawController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(methodOn(TransferController.class).transfer(null)).withRel("transfer");
-		Link close = linkTo(methodOn(AccountController.class).closeAccount(movement.getAccount().getAccountId())).withRel("close");
-		Link movementByDate = linkTo(methodOn(MovementController.class).movement(movement.getAccount().getAccountId(), "date")).withRel("movement_by_date");
-		Link movementByValue = linkTo(methodOn(MovementController.class).movement(movement.getAccount().getAccountId(), "value")).withRel("movement_by_value");
-		if (movement.getAccount().getBalance() > 0) {
+		Link close = linkTo(methodOn(AccountController.class).closeAccount(movementVO.getAccount().getAccountId())).withRel("close");
+		Link movementByDate = linkTo(methodOn(MovementController.class).movement(movementVO.getAccount().getAccountId(), "date")).withRel("movement_by_date");
+		Link movementByValue = linkTo(methodOn(MovementController.class).movement(movementVO.getAccount().getAccountId(), "value")).withRel("movement_by_value");
+		if (account.getBalance() > 0) {
 			resource.add(self, deposit, withdraw, transfer, movementByDate, movementByValue, close);
 		} else {
 			resource.add(self, deposit, movementByDate, movementByValue, close);

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.moneymovements.converter.DozerConverter;
 import br.com.moneymovements.domain.Account;
 import br.com.moneymovements.domain.Movement;
 import br.com.moneymovements.exception.AccountNotFoundException;
@@ -21,6 +22,7 @@ import br.com.moneymovements.exception.InsufficientBalanceException;
 import br.com.moneymovements.exception.SameAccountException;
 import br.com.moneymovements.exception.UnableToDepositException;
 import br.com.moneymovements.service.AccountService;
+import br.com.moneymovements.vo.MovementVO;
 
 @RestController
 @RequestMapping("/api/movement")
@@ -30,18 +32,18 @@ public class MovementController {
 	private AccountService accountService;
 
 	@GetMapping(params = { "id" })
-	public Resources<List<Movement>> movement(@RequestParam(value = "id") int acc) throws AccountNotFoundException,
+	public Resources<List<MovementVO>> movement(@RequestParam(value = "id") int acc) throws AccountNotFoundException,
 			CloseAccountException, InsufficientBalanceException, UnableToDepositException, SameAccountException {
 
 		Account account = this.accountService.findAccount(acc);
 
-		List<Movement> movements = this.accountService.getAllMovementsByAccount(acc);
+		List<MovementVO> movementsVO = this.accountService.getAllMovementsByAccount(acc);
 
-		Resources resources = new Resources<>(movements);
+		Resources resources = new Resources<>(movementsVO);
 
 		Link self = linkTo(methodOn(AccountController.class).getAccount(account.getAccountId())).withSelfRel();
-		Link deposit = linkTo(methodOn(MMController.class).deposit(null)).withRel("deposit");
-		Link withdraw = linkTo(methodOn(MMController.class).withdraw(null)).withRel("withdraw");
+		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
+		Link withdraw = linkTo(methodOn(WithdrawController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(methodOn(TransferController.class).transfer(null)).withRel("transfer");
 		Link close = linkTo(methodOn(AccountController.class).closeAccount(account.getAccountId())).withRel("close");
 		Link movementByDate = linkTo(methodOn(MovementController.class).movement(account.getAccountId(), "date")).withRel("movement_by_date");
@@ -55,22 +57,22 @@ public class MovementController {
 	}
 
 	@GetMapping(params = { "id", "by" })
-	public Resources<List<Movement>> movement(@RequestParam(value = "id") int acc,
+	public Resources<List<MovementVO>> movement(@RequestParam(value = "id") int acc,
 			@RequestParam(value = "by") String by) throws UnableToDepositException, AccountNotFoundException,
 			InsufficientBalanceException, CloseAccountException, SameAccountException {
 		Account account = this.accountService.findAccount(acc);
 
-		List<Movement> movements = this.accountService.getAllMovementsByAccountSorted(acc, by);
+		List<MovementVO> movementsVO = this.accountService.getAllMovementsByAccountSorted(acc, by);
 
-		Resources resources = new Resources<>(movements);
+		Resources resources = new Resources<>(movementsVO);
 
 		Link self = linkTo(methodOn(AccountController.class).getAccount(account.getAccountId())).withSelfRel();
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
 		Link withdraw = linkTo(methodOn(WithdrawController.class).withdraw(null)).withRel("withdraw");
-		Link transfer = linkTo(methodOn(MMController.class).transfer(null)).withRel("transfer");
+		Link transfer = linkTo(methodOn(TransferController.class).transfer(null)).withRel("transfer");
 		Link movementByDate = linkTo(methodOn(MovementController.class).movement(account.getAccountId(), "date")).withRel("movement_by_date");
 		Link movementByValue = linkTo(methodOn(MovementController.class).movement(account.getAccountId(), "value")).withRel("movement_by_value");
-		Link close = linkTo(methodOn(MMController.class).closeAccount(account.getAccountId())).withRel("close");
+		Link close = linkTo(methodOn(AccountController.class).closeAccount(account.getAccountId())).withRel("close");
 		if (account.getBalance() > 0) {
 			resources.add(self, deposit, withdraw, transfer, movementByDate, movementByValue, close);
 		} else {

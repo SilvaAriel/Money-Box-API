@@ -24,25 +24,12 @@ public class Account extends ResourceSupport {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Getter
-	@Setter
-	private int accountId;
-	@Getter
-	@Setter
-	private String name;
-	@Getter
-	@Setter
-	private double balance;
-
-	@JsonManagedReference
-	@OneToMany(mappedBy = "account")
-	@Basic(fetch=FetchType.LAZY)
-	@Getter
-	private List<Movement> movements;
-
-	@Getter
-	@Setter
-	private boolean status;
+	@Getter @Setter	private int accountId;
+	@Getter	@Setter	private String name;
+	@Getter	@Setter	private double balance;
+	@JsonManagedReference @OneToMany(mappedBy = "account") @Basic(fetch=FetchType.LAZY)
+	@Getter	private List<Movement> movements;
+	@Getter	@Setter	private boolean status;
 
 	public Account() {}
 	
