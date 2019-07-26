@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,7 +57,7 @@ public class AccountController {
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
 		Link withdraw = linkTo(methodOn(WithdrawController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(methodOn(TransferController.class).transfer(null)).withRel("transfer");
-		Link close = linkTo(methodOn(AccountController.class).closeAccount(accountVO.getAccountId())).withRel("close");
+		Link close = linkTo(methodOn(AccountController.class).closeAccount(accountVO)).withRel("close");
 		if (accountVO.getBalance() > 0) {
 			resource.add(self, deposit, withdraw, transfer, close);
 		} else {
@@ -67,9 +68,10 @@ public class AccountController {
 	}
 
 	@PatchMapping()
-	public ResponseEntity<Boolean> closeAccount(@RequestParam(value = "id") int id)
+	public ResponseEntity<Boolean> closeAccount(@RequestBody AccountVO account)
 			throws CloseAccountException, AccountNotFoundException {
-		boolean acc = accountService.closeAccount(id);
+		boolean acc = accountService.closeAccount(account.getAccountId());
 		return new ResponseEntity<>(acc, HttpStatus.OK);
 	}
+	
 }

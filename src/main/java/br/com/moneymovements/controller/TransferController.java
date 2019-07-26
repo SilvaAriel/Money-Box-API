@@ -20,6 +20,7 @@ import br.com.moneymovements.exception.InsufficientBalanceException;
 import br.com.moneymovements.exception.SameAccountException;
 import br.com.moneymovements.exception.UnableToDepositException;
 import br.com.moneymovements.service.AccountService;
+import br.com.moneymovements.vo.AccountVO;
 import br.com.moneymovements.vo.MovementVO;
 
 @RestController
@@ -35,7 +36,7 @@ public class TransferController {
 
 		MovementVO movementVO = this.accountService.transfer(movement);
 		
-		Account account = this.accountService.findAccount(movementVO.getAccount().getAccountId());
+		AccountVO accountVO = DozerConverter.parseObject(this.accountService.findAccount(movementVO.getAccount().getAccountId()), AccountVO.class);
 		
 		Resource resource = new Resource<>(movementVO);
 		
@@ -43,10 +44,10 @@ public class TransferController {
 		Link deposit = linkTo(methodOn(DepositController.class).deposit(null)).withRel("deposit");
 		Link withdraw = linkTo(methodOn(WithdrawController.class).withdraw(null)).withRel("withdraw");
 		Link transfer = linkTo(methodOn(TransferController.class).transfer(null)).withRel("transfer");
-		Link close = linkTo(methodOn(AccountController.class).closeAccount(movementVO.getAccount().getAccountId())).withRel("close");
+		Link close = linkTo(methodOn(AccountController.class).closeAccount(accountVO)).withRel("close");
 		Link movementByDate = linkTo(methodOn(MovementController.class).movement(movementVO.getAccount().getAccountId(), "date")).withRel("movement_by_date");
 		Link movementByValue = linkTo(methodOn(MovementController.class).movement(movementVO.getAccount().getAccountId(), "value")).withRel("movement_by_value");
-		if (account.getBalance() > 0) {
+		if (accountVO.getBalance() > 0) {
 			resource.add(self, deposit, withdraw, transfer, movementByDate, movementByValue, close);
 		} else {
 			resource.add(self, deposit, movementByDate, movementByValue, close);
