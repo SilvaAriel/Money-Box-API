@@ -77,8 +77,7 @@ public class AccountServiceImpl implements AccountService {
 		} catch (OpenAccountException e) {
 			throw new OpenAccountException("Unable to open the account: " + accname);
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-					"Unable to open the account: " + accname, e);
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to open the account", e);
 		}
 	}
 
