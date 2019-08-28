@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.moneymovements.converter.DozerConverter;
-import br.com.moneymovements.domain.Account;
-import br.com.moneymovements.domain.Movement;
 import br.com.moneymovements.exception.AccountNotFoundException;
 import br.com.moneymovements.exception.CloseAccountException;
 import br.com.moneymovements.exception.InsufficientBalanceException;
