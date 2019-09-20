@@ -6,6 +6,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ import br.com.moneymovements.service.AccountService;
 import br.com.moneymovements.vo.AccountVO;
 import br.com.moneymovements.vo.MovementVO;
 
+@CrossOrigin("https://moneybox1.herokuapp.com/")
 @RestController
 @RequestMapping("/api/deposit")
 public class DepositController {

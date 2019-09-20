@@ -8,14 +8,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resources;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.moneymovements.converter.DozerConverter;
-import br.com.moneymovements.domain.Account;
-import br.com.moneymovements.domain.Movement;
 import br.com.moneymovements.exception.AccountNotFoundException;
 import br.com.moneymovements.exception.CloseAccountException;
 import br.com.moneymovements.exception.InsufficientBalanceException;
@@ -25,6 +24,7 @@ import br.com.moneymovements.service.AccountService;
 import br.com.moneymovements.vo.AccountVO;
 import br.com.moneymovements.vo.MovementVO;
 
+@CrossOrigin("https://moneybox1.herokuapp.com/")
 @RestController
 @RequestMapping("/api/movement")
 public class MovementController {

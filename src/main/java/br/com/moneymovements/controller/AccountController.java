@@ -10,6 +10,7 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,7 @@ import br.com.moneymovements.exception.UnableToDepositException;
 import br.com.moneymovements.service.AccountService;
 import br.com.moneymovements.vo.AccountVO;
 
+@CrossOrigin("https://moneybox1.herokuapp.com/")
 @RestController
 @RequestMapping("/api/account")
 public class AccountController {
