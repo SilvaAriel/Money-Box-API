@@ -29,7 +29,7 @@ import br.com.moneymovements.exception.UnableToDepositException;
 import br.com.moneymovements.service.AccountService;
 import br.com.moneymovements.vo.AccountVO;
 
-@CrossOrigin(origins = "https://moneybox1.herokuapp.com/")
+@CrossOrigin()
 @RestController
 @RequestMapping("/api/account")
 public class AccountController {

@@ -24,7 +24,7 @@ import br.com.moneymovements.service.AccountService;
 import br.com.moneymovements.vo.AccountVO;
 import br.com.moneymovements.vo.MovementVO;
 
-@CrossOrigin(origins = "https://moneybox1.herokuapp.com/")
+@CrossOrigin()
 @RestController
 @RequestMapping("/api/movement")
 public class MovementController {
