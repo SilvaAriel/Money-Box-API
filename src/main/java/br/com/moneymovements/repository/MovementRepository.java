@@ -9,6 +9,5 @@ import br.com.moneymovements.domain.Movement;
 @Repository
 public interface MovementRepository extends CrudRepository <Movement, Integer>, GetAccountMovements {
 	
-	<S extends Movement> S save (Movement movement);
 
 }

@@ -2,10 +2,10 @@ package br.com.moneymovements.domain;
 
 import org.springframework.stereotype.Component;
 
-import br.com.moneymovements.exception.OpenAccountException;
-import br.com.moneymovements.exception.UnableToDepositException;
 import br.com.moneymovements.exception.CloseAccountException;
 import br.com.moneymovements.exception.InsufficientBalanceException;
+import br.com.moneymovements.exception.OpenAccountException;
+import br.com.moneymovements.exception.UnableToDepositException;
 
 @Component
 public class AccountManager  {

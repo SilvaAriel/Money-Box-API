@@ -9,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.springframework.hateoas.ResourceSupport;
 
@@ -25,14 +23,14 @@ public class Movement extends ResourceSupport {
 	
 	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Getter private int movementId;
-	@Temporal(TemporalType.TIME)
 	@Getter @Setter private Date date;
 	@Getter @Setter private String detail;
 	@Getter @Setter private float value;
 	@ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
 	@JsonBackReference
-	@Getter @Setter private Account account;
+	private Account account;
+	@Getter @Setter	private int destAccountId;
 	
 	public Movement() {}
 	
@@ -46,5 +44,15 @@ public class Movement extends ResourceSupport {
 		this.detail = movement.getDetail();
 		this.value = movement.getValue();
 	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+	
+	
 	
 }

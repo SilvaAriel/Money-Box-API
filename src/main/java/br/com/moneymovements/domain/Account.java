@@ -1,6 +1,6 @@
 package br.com.moneymovements.domain;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -24,31 +24,21 @@ public class Account extends ResourceSupport {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Getter
-	private int accountId;
-	@Getter
-	@Setter
-	private String name;
-	@Getter
-	@Setter
-	private double balance;
-
-	@JsonManagedReference
-	@OneToMany(mappedBy = "account")
-	@Basic(fetch=FetchType.LAZY)
-	@Getter
-	private Set<Movement> movements;
-
-	@Getter
-	@Setter
-	private boolean status;
+	@Getter @Setter	private int accountId;
+	@Getter	@Setter	private String name;
+	@Getter	@Setter	private double balance;
+	@JsonManagedReference @OneToMany(mappedBy = "account") @Basic(fetch=FetchType.LAZY)
+	@Getter	private List<Movement> movements;
+	@Getter	@Setter	private boolean status;
 
 	public Account() {}
+	
+	public Account(String account) {}
 	
 	public Account(String name, double balance) {
 		this.name = name;
 		this.balance = balance;
 		this.status = true;
 	}
-
+	
 }

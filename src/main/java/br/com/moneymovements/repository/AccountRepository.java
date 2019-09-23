@@ -11,8 +11,6 @@ import br.com.moneymovements.domain.Account;
 @Repository
 public interface AccountRepository extends CrudRepository <Account, Integer>, GetAccount {
 
-	Account findAccount(int account);
 	Set<Account> findAll();
-	<S extends Account> S save (Account acc);
 	Optional<Account> findById(Integer id);
 }
