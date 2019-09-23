@@ -14,6 +14,7 @@ API consumed by the [Money Box](https://github.com/SilvaAriel/Money-Box) Angular
 - [x] Get Account Movements
 - [x] Get Account Movements by Date or Value
 - [x] Close Account
+- [ ] Export Account Movements to .csv
 - [ ] Authentication
 
 ## Installation and Setup Instructions
