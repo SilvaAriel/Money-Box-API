@@ -57,6 +57,12 @@ public class GlobalExceptionHandler {
 			SameAccountException unfe = (SameAccountException) ex;
 			return handleSameAccountException(unfe, headers, status, request);
 		}
+		
+		else if (ex instanceof InvalidJWTAuthenticationException) {
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+			InvalidJWTAuthenticationException unfe = (InvalidJWTAuthenticationException) ex;
+			return handleInvalidJWTAuthentication(unfe, headers, status, request);
+		}
 
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 		return handleExceptionInternal(ex, null, headers, status, request);
@@ -101,6 +107,12 @@ public class GlobalExceptionHandler {
 	private ResponseEntity<ApiError> handleExceptionInternal(Exception ex, @Nullable ApiError body, HttpHeaders headers,
 			HttpStatus status, WebRequest request) {
 		return new ResponseEntity<>(body, headers, status);
+	}
+	
+	private ResponseEntity<ApiError> handleInvalidJWTAuthentication(Exception ex, HttpHeaders headers, HttpStatus status,
+			WebRequest request) {
+		List<String> error = Collections.singletonList(ex.getMessage());
+		return handleExceptionInternal(ex, new ApiError(error), headers, status, request);
 	}
 
 }
