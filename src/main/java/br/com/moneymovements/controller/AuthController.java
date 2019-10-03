@@ -5,21 +5,27 @@ import static org.springframework.http.ResponseEntity.ok;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.moneymovements.domain.User;
+import br.com.moneymovements.exception.UnableToCreateUserException;
 import br.com.moneymovements.repository.UserRepository;
 import br.com.moneymovements.security.AccountCredentialsVO;
 import br.com.moneymovements.security.jwt.JwtTokenProvider;
+import br.com.moneymovements.service.UserService;
 
+@CrossOrigin()
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -29,6 +35,18 @@ public class AuthController {
 	
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
+	
+	@Autowired
+	private UserService userService;
+	
+	@PostMapping("/signup")
+	public ResponseEntity signup(@RequestBody User user) throws UnableToCreateUserException {
+		
+		User newUser = userService.createUser(user);
+		
+		return ok(HttpServletResponse.SC_CREATED);
+		
+	}
 
 	@PostMapping("/signin")
 	public ResponseEntity signin(@RequestBody AccountCredentialsVO data) {

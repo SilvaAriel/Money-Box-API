@@ -17,7 +17,7 @@ import br.com.moneymovements.domain.ApiError;
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler({ InsufficientBalanceException.class, OpenAccountException.class, CloseAccountException.class,
-			UnableToDepositException.class, AccountNotFoundException.class, SameAccountException.class })
+			UnableToDepositException.class, AccountNotFoundException.class, SameAccountException.class, UnableToCreateUserException.class })
 	public final ResponseEntity<ApiError> handleExeption(Exception ex, WebRequest request) {
 
 		HttpHeaders headers = new HttpHeaders();
@@ -62,6 +62,12 @@ public class GlobalExceptionHandler {
 			HttpStatus status = HttpStatus.BAD_REQUEST;
 			InvalidJWTAuthenticationException unfe = (InvalidJWTAuthenticationException) ex;
 			return handleInvalidJWTAuthentication(unfe, headers, status, request);
+		}
+		
+		else if (ex instanceof UnableToCreateUserException) {
+			HttpStatus status = HttpStatus.BAD_REQUEST;
+			UnableToCreateUserException unfe = (UnableToCreateUserException) ex;
+			return handleUnableToCreateUserException(unfe, headers, status, request);
 		}
 
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -110,6 +116,12 @@ public class GlobalExceptionHandler {
 	}
 	
 	private ResponseEntity<ApiError> handleInvalidJWTAuthentication(Exception ex, HttpHeaders headers, HttpStatus status,
+			WebRequest request) {
+		List<String> error = Collections.singletonList(ex.getMessage());
+		return handleExceptionInternal(ex, new ApiError(error), headers, status, request);
+	}
+	
+	private ResponseEntity<ApiError> handleUnableToCreateUserException(Exception ex, HttpHeaders headers, HttpStatus status,
 			WebRequest request) {
 		List<String> error = Collections.singletonList(ex.getMessage());
 		return handleExceptionInternal(ex, new ApiError(error), headers, status, request);
