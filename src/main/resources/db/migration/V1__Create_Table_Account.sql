@@ -3,5 +3,8 @@ CREATE TABLE IF NOT EXISTS `account` (
   `balance` double NOT NULL,
   `name` varchar(255) DEFAULT NULL,
   `status` bit(1) NOT NULL,
-  PRIMARY KEY (`account_id`)
+  `user_id` bigint(20) NOT NULL,
+  PRIMARY KEY (`account_id`),
+  KEY `FKra7xoi9wtlcq07tmoxxe5jrh4` (`user_id`),
+  CONSTRAINT `FKra7xoi9wtlcq07tmoxxe5jrh4` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 )

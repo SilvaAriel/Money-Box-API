@@ -8,7 +8,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.springframework.hateoas.ResourceSupport;
@@ -27,10 +29,14 @@ public class Account extends ResourceSupport {
 	@Getter @Setter	private int accountId;
 	@Getter	@Setter	private String name;
 	@Getter	@Setter	private double balance;
-	@JsonManagedReference @OneToMany(mappedBy = "account") @Basic(fetch=FetchType.LAZY)
+	@JsonManagedReference
+	@OneToMany(mappedBy = "account") @Basic(fetch=FetchType.LAZY)
 	@Getter	private List<Movement> movements;
 	@Getter	@Setter	private boolean status;
-
+	@OneToOne
+	@JoinColumn (name = "userId", nullable = false)
+	@Getter	private User user;
+	
 	public Account() {}
 	
 	public Account(String account) {}
@@ -40,5 +46,6 @@ public class Account extends ResourceSupport {
 		this.balance = balance;
 		this.status = true;
 	}
+
 	
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -50,6 +52,9 @@ public class User implements UserDetails, Serializable{
 	
 	@Column (name = "enabled")
 	private Boolean isEnabled;
+	
+	@OneToMany (mappedBy = "user") @Basic(fetch=FetchType.LAZY)
+	private List<Account> accounts;
 	
 	@ManyToMany (fetch = FetchType.EAGER)
 	@JoinTable (name = "user_permission", joinColumns = {@JoinColumn (name = "id_user")}, 
@@ -154,6 +159,13 @@ public class User implements UserDetails, Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
+	public List<Account> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(List<Account> accounts) {
+		this.accounts = accounts;
+	}
 
 }
