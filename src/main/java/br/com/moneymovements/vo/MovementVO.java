@@ -2,9 +2,6 @@ package br.com.moneymovements.vo;
 
 import java.util.Date;
 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import org.springframework.hateoas.ResourceSupport;
 
 import br.com.moneymovements.domain.Account;

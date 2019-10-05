@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import org.springframework.hateoas.ResourceSupport;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.Getter;
@@ -35,7 +36,8 @@ public class Account extends ResourceSupport {
 	@Getter	@Setter	private boolean status;
 	@OneToOne
 	@JoinColumn (name = "userId", nullable = false)
-	@Getter	private User user;
+	@JsonBackReference
+	@Getter	@Setter private User user;
 	
 	public Account() {}
 	

@@ -21,6 +21,8 @@ import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table (name = "users")
 public class User implements UserDetails, Serializable{
@@ -53,6 +55,7 @@ public class User implements UserDetails, Serializable{
 	@Column (name = "enabled")
 	private Boolean isEnabled;
 	
+	@JsonManagedReference
 	@OneToMany (mappedBy = "user") @Basic(fetch=FetchType.LAZY)
 	private List<Account> accounts;
 	
@@ -67,6 +70,10 @@ public class User implements UserDetails, Serializable{
 			roles.add(permission.getDescription());
 		}
 		return roles ;
+	}
+	
+	public Long getId() {
+		return id;
 	}
 	
 	@Override

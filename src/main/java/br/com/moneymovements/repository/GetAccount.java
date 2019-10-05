@@ -10,6 +10,6 @@ import br.com.moneymovements.domain.Account;
 @Repository
 public interface GetAccount{
 
-	Optional<Account> findAccount(int account);
-	List<Account> findAllAccounts();
+	Optional<Account> findAccount(int account, Long userId);
+	List<Account> findAllAccounts(Long userId);
 }

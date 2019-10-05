@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -64,6 +65,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	private String encryptPassword(String password) {
 		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 		return bCryptPasswordEncoder.encode(password);
+	}
+	
+	public User getCurrentUser() {
+		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
 }

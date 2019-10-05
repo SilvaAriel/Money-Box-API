@@ -18,8 +18,8 @@ public class GetAccountImpl implements GetAccount {
     private EntityManager entityManager;
 	
 	@Override
-	public Optional<Account> findAccount(int account){
-		Query query = entityManager.createNativeQuery(String.format("select * from account where account_id = %s", account), Account.class);
+	public Optional<Account> findAccount(int account, Long userId){
+		Query query = entityManager.createNativeQuery(String.format("select * from account where account_id = %s and user_id = %s", account, userId), Account.class);
 		List<Account> accList = (List<Account>) query.getResultList();
 		if (!accList.isEmpty()) {
 			return Optional.of(accList.get(0));
@@ -28,8 +28,8 @@ public class GetAccountImpl implements GetAccount {
 	}
 
 	@Override
-	public List<Account> findAllAccounts() {
-		Query query = entityManager.createNativeQuery("select * from account", Account.class);
+	public List<Account> findAllAccounts(Long userId) {
+		Query query = entityManager.createNativeQuery("select * from account where user_id = "+ userId, Account.class);
 		return query.getResultList();
 	}
 

@@ -15,6 +15,7 @@ import br.com.moneymovements.converter.DozerConverter;
 import br.com.moneymovements.domain.Account;
 import br.com.moneymovements.domain.AccountManager;
 import br.com.moneymovements.domain.Movement;
+import br.com.moneymovements.domain.User;
 import br.com.moneymovements.exception.AccountNotFoundException;
 import br.com.moneymovements.exception.CloseAccountException;
 import br.com.moneymovements.exception.InsufficientBalanceException;
@@ -38,6 +39,9 @@ public class AccountServiceImpl implements AccountService {
 
 	@Autowired
 	private MovementRepository movementRepository;
+	
+	@Autowired
+	private UserService userService;
 
 	@Getter
 	private Set<Account> accounts = new HashSet<>();
@@ -54,7 +58,8 @@ public class AccountServiceImpl implements AccountService {
 	
 	@Override
 	public Account findAccount(int id) throws AccountNotFoundException{
-		Optional<Account> accountEntity = this.accountRepository.findAccount(id);
+		User user = userService.getCurrentUser();
+		Optional<Account> accountEntity = this.accountRepository.findAccount(id, user.getId());
 		if (accountEntity.isPresent()) {
 			return accountEntity.get();
 		} else {
@@ -65,13 +70,16 @@ public class AccountServiceImpl implements AccountService {
 	
 	@Override
 	public List<AccountVO> findAllAccounts(){
-		return DozerConverter.parseObjectList(this.accountRepository.findAllAccounts(), AccountVO.class);
+		User user = userService.getCurrentUser();
+		return DozerConverter.parseObjectList(this.accountRepository.findAllAccounts(user.getId()), AccountVO.class);
 	}
 
 	@Override
 	public AccountVO createAccount(String accname, double balance) throws OpenAccountException {
 		try {
 			Account accountCreated = accountManager.createAccount(accname, balance);
+			User user = userService.getCurrentUser();
+			accountCreated.setUser(user);
 			this.accountRepository.save(accountCreated);
 			return DozerConverter.parseObject(accountCreated, AccountVO.class);
 		} catch (OpenAccountException e) {
@@ -112,7 +120,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 	
 	public MovementVO deposit(MovementVO movement) throws UnableToDepositException, AccountNotFoundException {
-		Optional<Account> accountExists = accountRepository.findAccount(movement.getAccount().getAccountId());
+		User user = userService.getCurrentUser();
+		Optional<Account> accountExists = accountRepository.findAccount(movement.getAccount().getAccountId(), user.getId());
 				
 		if (accountExists.isPresent() && accountExists.get().isStatus()) {
 			try {
@@ -135,7 +144,8 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	public MovementVO withdraw(MovementVO movement) throws InsufficientBalanceException, AccountNotFoundException {
-		Optional<Account> accountExists = accountRepository.findAccount(movement.getAccount().getAccountId());
+		User user = userService.getCurrentUser();
+		Optional<Account> accountExists = accountRepository.findAccount(movement.getAccount().getAccountId(), user.getId());
 		
 		if (accountExists.isPresent() && accountExists.get().isStatus()) {
 			try {

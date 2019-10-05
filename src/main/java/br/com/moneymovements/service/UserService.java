@@ -7,4 +7,6 @@ public interface UserService  {
 
 	public User createUser(User user) throws UnableToCreateUserException;
 	
+	public User getCurrentUser();
+	
 }

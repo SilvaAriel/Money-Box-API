@@ -1,7 +1,5 @@
 package br.com.moneymovements.vo;
 
-import java.util.List;
-
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -18,8 +16,9 @@ public class AccountVO extends ResourceSupport {
 	@Getter @Setter	private int accountId;
 	@Getter @Setter	private String name;
 	@Getter @Setter	private double balance;
-	@Setter @Getter	private List<MovementVO> movements;
-	@Getter @Setter private boolean status;
+	//@Setter @Getter	private List<MovementVO> movements;
+	//@Getter @Setter private boolean status;
+	//@Getter	@Setter private UserVO user;
 
 	public AccountVO() {}
 	
@@ -28,7 +27,6 @@ public class AccountVO extends ResourceSupport {
 	public AccountVO(String name, double balance) {
 		this.name = name;
 		this.balance = balance;
-		this.status = true;
 	}
 	
 }
