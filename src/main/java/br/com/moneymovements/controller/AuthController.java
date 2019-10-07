@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,10 +53,9 @@ public class AuthController {
 	public ResponseEntity signin(@RequestBody AccountCredentialsVO data) {
 		
 		try {
-			
 			String username = data.getUsername();
 			String password = data.getPassword();
-			User user = userRepository.findByUserName(username);
+			User user = (User) userService.loadUserByUsernameAndPassword(username, password);
 			String token;
 			
 			if (user != null) {

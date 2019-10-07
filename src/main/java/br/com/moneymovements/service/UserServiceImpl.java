@@ -21,21 +21,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Autowired
 	private UserRepository userRepository;
-
+	
 	public UserServiceImpl(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-		User user = userRepository.findByUserName(userName);
-		if (user != null) {
+		return null;
+	}
+	
+	public UserDetails loadUserByUsernameAndPassword(String username, String password) throws UsernameNotFoundException {
+		User user = userRepository.findByUserName(username);
+		boolean passwordCheck = decryptPassword(password, user.getPassword());
+		if (user != null && passwordCheck) {
 			return user;
 		} else {
-			throw new UsernameNotFoundException("Username " + userName + " not found.");
+			throw new UsernameNotFoundException("Username " + username + " not found.");
 		}
 	}
-
+	
 	@Override
 	public User createUser(User user) throws UnableToCreateUserException {
 
@@ -65,6 +70,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	private String encryptPassword(String password) {
 		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 		return bCryptPasswordEncoder.encode(password);
+	}
+	
+	private boolean decryptPassword(String passwordSubmited, String passwordFromBase) {
+		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+		return bCryptPasswordEncoder.matches(passwordSubmited, passwordFromBase);
 	}
 	
 	public User getCurrentUser() {
