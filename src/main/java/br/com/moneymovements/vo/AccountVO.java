@@ -16,9 +16,6 @@ public class AccountVO extends ResourceSupport {
 	@Getter @Setter	private int accountId;
 	@Getter @Setter	private String name;
 	@Getter @Setter	private double balance;
-	//@Setter @Getter	private List<MovementVO> movements;
-	//@Getter @Setter private boolean status;
-	//@Getter	@Setter private UserVO user;
 
 	public AccountVO() {}
 	
