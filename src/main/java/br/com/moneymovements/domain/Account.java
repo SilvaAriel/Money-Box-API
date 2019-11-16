@@ -15,21 +15,18 @@ import org.springframework.hateoas.ResourceSupport;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import lombok.Getter;
-import lombok.Setter;
-
 @Entity
 @Table(name = "account")
 public class Account extends ResourceSupport {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Getter @Setter	private int accountId;
-	@Getter	@Setter	private String name;
-	@Getter	@Setter	private double balance;
+	private int accountId;
+	private String name;
+	private double balance;
 	@JsonManagedReference @OneToMany(mappedBy = "account") @Basic(fetch=FetchType.LAZY)
-	@Getter	private List<Movement> movements;
-	@Getter	@Setter	private boolean status;
+	private List<Movement> movements;
+	private boolean status;
 
 	public Account() {}
 	
@@ -40,5 +37,42 @@ public class Account extends ResourceSupport {
 		this.balance = balance;
 		this.status = true;
 	}
+
+	public int getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(int accountId) {
+		this.accountId = accountId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getBalance() {
+		return balance;
+	}
+
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+
+	public boolean isStatus() {
+		return status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
+	}
+
+	public List<Movement> getMovements() {
+		return movements;
+	}
+	
 	
 }

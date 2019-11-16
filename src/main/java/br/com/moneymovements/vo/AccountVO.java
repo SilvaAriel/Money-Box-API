@@ -8,18 +8,15 @@ import javax.persistence.Id;
 
 import org.springframework.hateoas.ResourceSupport;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class AccountVO extends ResourceSupport {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Getter @Setter	private int accountId;
-	@Getter @Setter	private String name;
-	@Getter @Setter	private double balance;
-	@Setter @Getter	private List<MovementVO> movements;
-	@Getter @Setter private boolean status;
+	private int accountId;
+	private String name;
+	private double balance;
+	private List<MovementVO> movements;
+	private boolean status;
 
 	public AccountVO() {}
 	
@@ -29,6 +26,46 @@ public class AccountVO extends ResourceSupport {
 		this.name = name;
 		this.balance = balance;
 		this.status = true;
+	}
+
+	public int getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(int accountId) {
+		this.accountId = accountId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public double getBalance() {
+		return balance;
+	}
+
+	public void setBalance(double balance) {
+		this.balance = balance;
+	}
+
+	public List<MovementVO> getMovements() {
+		return movements;
+	}
+
+	public void setMovements(List<MovementVO> movements) {
+		this.movements = movements;
+	}
+
+	public boolean isStatus() {
+		return status;
+	}
+
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 	
 }

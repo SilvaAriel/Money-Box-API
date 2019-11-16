@@ -1,10 +1,8 @@
 package br.com.moneymovements.service;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +23,6 @@ import br.com.moneymovements.repository.AccountRepository;
 import br.com.moneymovements.repository.MovementRepository;
 import br.com.moneymovements.vo.AccountVO;
 import br.com.moneymovements.vo.MovementVO;
-import lombok.Getter;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -38,9 +35,6 @@ public class AccountServiceImpl implements AccountService {
 
 	@Autowired
 	private MovementRepository movementRepository;
-
-	@Getter
-	private Set<Account> accounts = new HashSet<>();
 
 	@Override
 	public List<MovementVO> getAllMovementsByAccount(int id) {
