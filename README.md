@@ -15,6 +15,7 @@ API consumed by the [Money Box](https://github.com/SilvaAriel/Money-Box) Angular
 - [x] Get Account Movements by Date or Value
 - [x] Close Account
 - [ ] Authentication
+- [ ] Export Account Movements to .csv
 
 ## Installation and Setup Instructions
 Clone down this repository and import it as a Maven project in your favorite IDE.

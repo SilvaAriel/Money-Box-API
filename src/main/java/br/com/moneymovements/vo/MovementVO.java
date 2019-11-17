@@ -2,23 +2,18 @@ package br.com.moneymovements.vo;
 
 import java.util.Date;
 
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import org.springframework.hateoas.ResourceSupport;
 
 import br.com.moneymovements.domain.Account;
-import lombok.Getter;
-import lombok.Setter;
 
 public class MovementVO extends ResourceSupport {
 	
-	@Getter @Setter private int movementId;
-	@Getter @Setter private Date date;
-	@Getter @Setter private String detail;
-	@Getter @Setter private float value;
-	@Getter @Setter private Account account;
-	@Getter @Setter	private int destAccountId;
+	private int movementId;
+	private Date date;
+	private String detail;
+	private float value;
+	private Account account;
+	private int destAccountId;
 	
 	public MovementVO() {}
 	
@@ -32,7 +27,54 @@ public class MovementVO extends ResourceSupport {
 		this.detail = movement.getDetail();
 		this.value = movement.getValue();
 	}
-	
+
+	public int getMovementId() {
+		return movementId;
+	}
+
+	public void setMovementId(int movementId) {
+		this.movementId = movementId;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+
+	public float getValue() {
+		return value;
+	}
+
+	public void setValue(float value) {
+		this.value = value;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	public int getDestAccountId() {
+		return destAccountId;
+	}
+
+	public void setDestAccountId(int destAccountId) {
+		this.destAccountId = destAccountId;
+	}
 	
 	
 }
