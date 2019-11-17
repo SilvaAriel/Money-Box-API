@@ -23,3 +23,18 @@ Clone down this repository and import it as a Maven project in your favorite IDE
 API URL  
 
 `localhost:8080/api/`
+
+## Installation and Setup Instructions
+Clone down this repository. You will need Docker installed on your machine run the app.
+
+To Start App and Database:
+
+`docker-compose up --build`
+
+To Visit App:
+
+`http://localhost:8080`
+
+To Connect to MySQL:
+
+`http://localhost:3307`
