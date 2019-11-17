@@ -25,7 +25,7 @@ API URL
 `localhost:8080/api/`
 
 ## Installation and Setup Instructions
-Clone down this repository. You will need Docker installed on your machine run the app.
+Clone down this repository. You will need Docker installed on your machine to run the app.
 
 To Start App and Database:
 
