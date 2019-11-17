@@ -4,7 +4,7 @@
 API consumed by the [Money Box](https://github.com/SilvaAriel/Money-Box) Angular app. It was built in Spring Boot.
 
 ## Project Status
-
+◼◼◼◼◼◼◼◼◼▭ 90%
 - [x] Open Account
 - [x] Deposit Money
 - [x] Withdraw Money
