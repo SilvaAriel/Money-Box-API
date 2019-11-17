@@ -18,13 +18,6 @@ API consumed by the [Money Box](https://github.com/SilvaAriel/Money-Box) Angular
 - [ ] Export Account Movements to .csv
 
 ## Installation and Setup Instructions
-Clone down this repository and import it as a Maven project in your favorite IDE.
-
-API URL  
-
-`localhost:8080/api/`
-
-## Installation and Setup Instructions
 Clone down this repository. You will need Docker installed on your machine to run the app.
 
 To Start App and Database:
