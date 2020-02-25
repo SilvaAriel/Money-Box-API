@@ -4,7 +4,7 @@
 API consumed by the [Money Box](https://github.com/SilvaAriel/Money-Box) Angular app. It was built in Spring Boot.
 
 ## Project Status
-◼◼◼◼◼◼◼◼◼▭ 90%
+◼◼◼◼◼◼◼◼◼◼ 100%
 - [x] Open Account
 - [x] Deposit Money
 - [x] Withdraw Money
@@ -14,8 +14,6 @@ API consumed by the [Money Box](https://github.com/SilvaAriel/Money-Box) Angular
 - [x] Get Account Movements
 - [x] Get Account Movements by Date or Value
 - [x] Close Account
-- [ ] Authentication
-- [ ] Export Account Movements to .csv
 
 ## Installation and Setup Instructions
 Clone down this repository. You will need Docker installed on your machine to run the app.
