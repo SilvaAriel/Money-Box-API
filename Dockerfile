@@ -7,8 +7,14 @@ COPY pom.xml .
 
 COPY src src
 
+# RUN mvn package
+
 ARG JAR_FILE=target/MoneyMovements-0.0.1-SNAPSHOT.jar
 
 COPY ${JAR_FILE} moneyMovements.jar
 
-CMD ["java","-jar","moneyMovements.jar"]
+COPY wait-for-it.sh /wait-for-it.sh
+
+# CMD ["java","-jar","moneyMovements.jar"]
+
+ENTRYPOINT ["./wait-for-it.sh","mysql:3306","--","java","-jar","moneyMovements.jar"]
