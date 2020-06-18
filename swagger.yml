@@ -1,0 +1,70 @@
+openapi: 3.0.0
+info:
+  description: Money Box API
+  version: 1.0.0
+  title: Money Box
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /account:
+    get:
+      summary: "Get account"
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          required: false
+          description: Account's id
+
+    post:
+      summary: "Create account"
+    patch:
+      summary: "Close account"
+  /deposit:
+    post:
+      summary: "Create deposit"
+  /teste:
+    post:
+      tags:
+        - "Customer"
+      summary: "Turn a lead into a customer by adding him/her to Zicard and Wallet databases"
+      operationId: "addCustomer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: ''
+      responses:
+        "201":
+          description: "Customer created with success"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: ""
+              examples:
+                ZicardError:
+                  value:
+                    namespace: "CUSTOMER-SERVICE"
+                    name: "BAD_REQUEST_ERROR"
+                    message: "Celular já utilizado por outro participante."
+                    details:
+                      field: "phone_number"
+                      issue: "Celular já utilizado por outro participante."
+                      location: "body"
+                    debug_id: null
+                    information_link: null
+                RequiredFieldError:
+                  value:
+                    namespace: "CUSTOMER-SERVICE"
+                    name: "BAD_REQUEST_ERROR"
+                    message: "'password' is a required field"
+                    details:
+                      field: "password"
+                      issue: "'password' is a required field"
+                      location: "body"
+                    debug_id: null
+                    information_link: null
