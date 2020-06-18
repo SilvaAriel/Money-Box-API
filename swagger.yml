@@ -16,20 +16,88 @@ paths:
             type: string
           required: false
           description: Account's id
-
+      responses:
+        200:
+          description: "Account returned"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/get_account_resp.json"
     post:
       summary: "Create an account"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/post_account_req.json'
+      responses:
+        201:
+          description: "Account created"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/post_account_resp.json"
+
     patch:
       summary: "Close an account"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/patch_account_req.json'
+      responses:
+        200:
+          description: "Account closed"
   /deposit:
     post:
       summary: "Make a deposit"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/post_deposit_req.json'
+      responses:
+        200:
+          description: "Account created"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/post_deposit_resp.json"
   /withdraw:
     post:
       summary: "Make a withdraw"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/post_withdraw_req.json'
+      responses:
+        200:
+          description: "Account created"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/post_withdraw_resp.json"
   /transter:
     post:
       summary: "Make a tranfer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/post_transfer_req.json'
+      responses:
+        200:
+          description: "Account created"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/post_transfer_resp.json"
   /movement:
     get:
       summary: "Account movement"
