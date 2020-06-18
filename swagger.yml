@@ -7,6 +7,21 @@ servers:
   - url: http://localhost:8080/api
 paths:
   /account:
+    post:
+      summary: "Create an account"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/post_account_req.json'
+      responses:
+        201:
+          description: "Account created"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/post_account_resp.json"
     get:
       summary: "Get an account"
       parameters:
@@ -23,22 +38,12 @@ paths:
             application/json:
               schema:
                 $ref: "./schemas/get_account_resp.json"
-    post:
-      summary: "Create an account"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './schemas/post_account_req.json'
-      responses:
-        201:
-          description: "Account created"
+        500:
+          description: "Account not found or closed"
           content:
             application/json:
               schema:
-                $ref: "./schemas/post_account_resp.json"
-
+                $ref: "./schemas/error_account_not_found.json"
     patch:
       summary: "Close an account"
       requestBody:
@@ -50,9 +55,15 @@ paths:
       responses:
         200:
           description: "Account closed"
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"
   /deposit:
     post:
-      summary: "Make a deposit"
+      summary: "Deposit"
       requestBody:
         required: true
         content:
@@ -61,14 +72,20 @@ paths:
               $ref: './schemas/post_deposit_req.json'
       responses:
         200:
-          description: "Account created"
+          description: "Deposit made"
           content:
             application/json:
               schema:
                 $ref: "./schemas/post_deposit_resp.json"
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"
   /withdraw:
     post:
-      summary: "Make a withdraw"
+      summary: "Withdraw"
       requestBody:
         required: true
         content:
@@ -77,14 +94,20 @@ paths:
               $ref: './schemas/post_withdraw_req.json'
       responses:
         200:
-          description: "Account created"
+          description: "Withdraw made"
           content:
             application/json:
               schema:
                 $ref: "./schemas/post_withdraw_resp.json"
-  /transter:
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"
+  /transfer:
     post:
-      summary: "Make a tranfer"
+      summary: "Transfer"
       requestBody:
         required: true
         content:
@@ -93,11 +116,17 @@ paths:
               $ref: './schemas/post_transfer_req.json'
       responses:
         200:
-          description: "Account created"
+          description: "Transfer made"
           content:
             application/json:
               schema:
                 $ref: "./schemas/post_transfer_resp.json"
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"
   /movement:
     get:
       summary: "Account movement"
@@ -113,5 +142,17 @@ paths:
           schema:
             type: string
             enum: [date, value]
-          required: false
-          description: Sort movement
+          description: Sort account movement
+      responses:
+        200:
+          description: "Movemnt returned"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/get_movement_resp.json"
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"
