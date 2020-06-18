@@ -9,7 +9,7 @@ services:
       depends_on:
          -   mysql
       environment:
-         -   SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/bank?useTimezone=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
+         -   SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/bank?useTimezone=true&useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&serverTimezone=America/Sao_Paulo
          -   SPRING_DATASOURCE_USERNAME=root
          -   SPRING_DATASOURCE_PASSWORD=123456789
    mysql:
