@@ -5,16 +5,17 @@ services:
       build: .
       ports:
          -   '8080:8080'
+      restart: on-failure:3
       depends_on:
          -   mysql
       environment:
-         -   SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/bank?useTimezone=true&serverTimezone=America/Sao_Paulo
+         -   SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/bank?useTimezone=true&useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true&serverTimezone=America/Sao_Paulo
          -   SPRING_DATASOURCE_USERNAME=root
          -   SPRING_DATASOURCE_PASSWORD=123456789
    mysql:
       image: mysql
       restart: always
       ports:
-         -   '3307:3306'
+         -   '3306:3306'
       environment:
          -   MYSQL_ROOT_PASSWORD=123456789
