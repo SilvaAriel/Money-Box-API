@@ -8,7 +8,7 @@ servers:
 paths:
   /account:
     get:
-      summary: "Get account"
+      summary: "Get an account"
       parameters:
         - in: query
           name: id
@@ -18,53 +18,32 @@ paths:
           description: Account's id
 
     post:
-      summary: "Create account"
+      summary: "Create an account"
     patch:
-      summary: "Close account"
+      summary: "Close an account"
   /deposit:
     post:
-      summary: "Create deposit"
-  /teste:
+      summary: "Make a deposit"
+  /withdraw:
     post:
-      tags:
-        - "Customer"
-      summary: "Turn a lead into a customer by adding him/her to Zicard and Wallet databases"
-      operationId: "addCustomer"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: ''
-      responses:
-        "201":
-          description: "Customer created with success"
-        "400":
-          description: "Bad Request"
-          content:
-            application/json:
-              schema:
-                $ref: ""
-              examples:
-                ZicardError:
-                  value:
-                    namespace: "CUSTOMER-SERVICE"
-                    name: "BAD_REQUEST_ERROR"
-                    message: "Celular já utilizado por outro participante."
-                    details:
-                      field: "phone_number"
-                      issue: "Celular já utilizado por outro participante."
-                      location: "body"
-                    debug_id: null
-                    information_link: null
-                RequiredFieldError:
-                  value:
-                    namespace: "CUSTOMER-SERVICE"
-                    name: "BAD_REQUEST_ERROR"
-                    message: "'password' is a required field"
-                    details:
-                      field: "password"
-                      issue: "'password' is a required field"
-                      location: "body"
-                    debug_id: null
-                    information_link: null
+      summary: "Make a withdraw"
+  /transter:
+    post:
+      summary: "Make a tranfer"
+  /movement:
+    get:
+      summary: "Account movement"
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          required: required
+          description: Account's id
+        - in: query
+          name: by
+          schema:
+            type: string
+            enum: [date, value]
+          required: false
+          description: Sort movement
