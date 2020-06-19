@@ -1,0 +1,158 @@
+openapi: 3.0.0
+info:
+  description: Money Box API
+  version: 1.0.0
+  title: Money Box
+servers:
+  - url: http://localhost:8080/api
+paths:
+  /account:
+    post:
+      summary: "Create an account"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/post_account_req.json'
+      responses:
+        201:
+          description: "Account created"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/post_account_resp.json"
+    get:
+      summary: "Get an account"
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          required: false
+          description: Account's id
+      responses:
+        200:
+          description: "Account returned"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/get_account_resp.json"
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"
+    patch:
+      summary: "Close an account"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/patch_account_req.json'
+      responses:
+        200:
+          description: "Account closed"
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"
+  /deposit:
+    post:
+      summary: "Deposit"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/post_deposit_req.json'
+      responses:
+        200:
+          description: "Deposit made"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/post_deposit_resp.json"
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"
+  /withdraw:
+    post:
+      summary: "Withdraw"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/post_withdraw_req.json'
+      responses:
+        200:
+          description: "Withdraw made"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/post_withdraw_resp.json"
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"
+  /transfer:
+    post:
+      summary: "Transfer"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './schemas/post_transfer_req.json'
+      responses:
+        200:
+          description: "Transfer made"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/post_transfer_resp.json"
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"
+  /movement:
+    get:
+      summary: "Account movement"
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          required: required
+          description: Account's id
+        - in: query
+          name: by
+          schema:
+            type: string
+            enum: [date, value]
+          description: Sort account movement
+      responses:
+        200:
+          description: "Movemnt returned"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/get_movement_resp.json"
+        500:
+          description: "Account not found or closed"
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/error_account_not_found.json"

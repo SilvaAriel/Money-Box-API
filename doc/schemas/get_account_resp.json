@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "properties": {
+    "accountId": {
+      "type": "integer",
+      "description": ""
+    },
+    "name": {
+      "type": "string",
+      "description": ""
+    },
+    "balance": {
+      "type": "number",
+      "description": ""
+    },
+    "movements": {
+      "type": "object",
+      "description": "List of the account's movements"
+    },
+    "status": {
+      "type": "boolean",
+      "description": ""
+    }
+  }
+}
