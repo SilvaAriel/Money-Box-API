@@ -11,7 +11,7 @@
     },
     "detail": {
       "type": "string",
-      "description": ""
+      "description": "Detail of the transference"
     },
     "value": {
       "type": "number",
