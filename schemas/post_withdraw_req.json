@@ -10,7 +10,7 @@
     },
     "detail": {
       "type": "string",
-      "description": ""
+      "description": "Detail of the withdrawal"
     },
     "value": {
       "type": "number",

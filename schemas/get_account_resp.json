@@ -15,7 +15,7 @@
     },
     "movements": {
       "type": "object",
-      "description": ""
+      "description": "List of the account's movements"
     },
     "status": {
       "type": "boolean",

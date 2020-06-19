@@ -19,3 +19,7 @@ services:
          -   '3306:3306'
       environment:
          -   MYSQL_ROOT_PASSWORD=123456789
+   swagger:
+      build: ./doc
+      ports:
+         -   '8090:8090'

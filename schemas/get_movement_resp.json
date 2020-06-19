@@ -17,7 +17,7 @@
             },
             "detail": {
               "type": "string",
-              "description": ""
+              "description": "Detail of the movement"
             },
             "value": {
               "type": "number",
