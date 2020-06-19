@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "properties": {
+    "_embedded": {
+      "type": "object",
+      "properties": {
+        "movementVOList": {
+          "type": "object",
+          "properties": {
+            "movementId": {
+              "type": "integer",
+              "description": ""
+            },
+            "date": {
+              "type": "string",
+              "description": ""
+            },
+            "detail": {
+              "type": "string",
+              "description": "Detail of the movement"
+            },
+            "value": {
+              "type": "number",
+              "description": ""
+            },
+            "account": {
+              "type": "object",
+              "properties": {
+                "accountId": {
+                  "type": "integer",
+                  "description": ""
+                },
+                "name": {
+                  "type": "string",
+                  "description": ""
+                },
+                "balance": {
+                  "type": "number",
+                  "description": ""
+                },
+                "movements": {
+                  "type": "object",
+                  "description": ""
+                },
+                "status": {
+                  "type": "boolean",
+                  "description": ""
+                }
+              },
+              "description": ""
+            },
+            "destAccountId": {
+              "type": "boolean",
+              "description": ""
+            },
+            "_links": {
+              "type": "object",
+              "description": "Possible operations with the account created"
+            }
+          }
+        }
+      },
+      "description": ""
+    },
+    "_links": {
+      "type": "object",
+      "description": "Possible operations with the account created"
+    }
+  }
+}

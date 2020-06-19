@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": ""
+    },
+    "balance": {
+      "type": "string",
+      "description": ""
+    }
+  },
+  "required": ["name", "balance"]
+}
